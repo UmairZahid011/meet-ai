@@ -1,0 +1,408 @@
+@font-face {
+    font-family: 'manrope-l';
+    src: url('/assets/fonts/Manrope-Light.ttf');
+}
+@font-face {
+    font-family: 'manrope';
+    src: url('/assets/fonts/Manrope-Regular.ttf');
+}
+@font-face {
+    font-family: 'manrope-m';
+    src: url('/assets/fonts/Manrope-Medium.ttf');
+}
+@font-face {
+    font-family: 'manrope-b';
+    src: url('/assets/fonts/Manrope-Bold.ttf');
+}
+*{
+    scroll-behavior: smooth;
+}
+body{
+    font-family: 'manrope';
+}
+h1{
+    font-size: 70px;
+    line-height: 1.2;
+    font-weight: 300;
+    color: #fff;
+    font-family: 'manrope-l';
+}
+h2{
+    font-size: 48px;
+    line-height: 1.4;
+    font-weight: 600;
+    color: #fff;
+    font-family: 'manrope-m';
+}
+h3{
+    font-size: 32px;
+    line-height: 1.4;
+    font-weight: 600;
+    color: #fff;
+    font-family: 'manrope-m';
+}
+h4,h5,h6{
+    color: #fff;
+    font-weight: bold;
+}
+p, li{
+    color: #a7aabb;
+    font-family: "manrope";
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.6em
+}
+.container{
+    margin: 0 auto;
+    padding: 0 24px;
+}
+.small-heading{
+    background-color: rgba(255, 255, 255, 0.06);
+    padding: 9px 24px 9px 24px;
+    border-style: solid;
+    border-width: 1px 1px 1px 1px;
+    border-color: #ffffff28;
+    border-radius: 100px 100px 100px 100px;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5;
+    width: fit-content;
+    margin:  0 auto;
+}
+.bg-primary-gradiant{
+    background: linear-gradient(90deg, #386BB7 0%, #E24C4A 100%);
+}
+.text-primary{
+    color: #E24C4A;
+}
+.text-gradiant-primary{
+    display: inline-block;
+    background: linear-gradient(to right, #386BB7 0%, #E24C4A 100%);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.primary-btn{
+    padding: 17px 20px;
+    border-radius: 50px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    line-height: normal;
+    font-size: 16px;
+    font-weight: 500;
+    background: linear-gradient(90deg, #386BB7 0%, #E24C4A 100%);
+    transition: all .3s ease-in-out;
+}
+.landing-main .primary-btn svg, .landing-main .primary-btn span{
+    transform: rotate(-45deg);
+    transition: all .3s ease-in-out;
+}
+.primary-btn:hover{
+    background: linear-gradient(90deg, #E24C4A 0%, #386BB7 100%);
+}
+.primary-btn:hover svg, .primary-btn:hover span{
+    transform: rotate(0deg);
+}
+/* header css */
+.header-main{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+.header-main nav li a{
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.3em;
+    color: #fff;
+    padding: 13px 15px 13px 15px;
+}
+.header-main nav li a.active,
+.header-main nav li a:hover{
+    color: #E24C4A;
+}
+/* header css */
+
+/* landing css */
+.hero-section{
+    padding: 225px 0 100px 0 ;
+    background-image: url('/assets/imgs/hero-bg-shape.png');
+    background-position: top center;
+    background-repeat: no-repeat;
+    background-size: auto;
+}
+.floating-icons a{
+    position: absolute;
+    top: 0;
+    left: 100px;
+    animation: updown 2s infinite alternate-reverse linear;
+}
+@keyframes updown {
+    0%{
+        transform: translateY(-10px);
+    }
+    100%{
+        transform: translateY(10px);
+    }
+}
+.floating-icons a:nth-child(2){
+    right: 100px;
+    left: unset;
+    animation-duration: 3s;
+}
+.floating-icons a:nth-child(3){
+    bottom: 0;
+    top: unset;
+    left: unset;
+    animation-duration: 2.5s;
+}
+.floating-icons a:nth-child(4){
+    bottom: 0;
+    left: unset;
+    right: 10px;
+    top: unset;
+    animation-duration: 2s;
+    animation-direction: alternate;
+}
+.bg-glass-color{
+    background-color: #ffffff0a;
+    background-image: url('/assets/imgs/section-bg-shape.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.swiper-button-prev,
+.swiper-button-next {
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 9999px; /* full circle */
+    width: 48px !important; /* Adjust size as needed */
+    height: 48px !important; /* Adjust size as needed */
+    display: flex;
+    color: #fff !important;
+    font-size: 14px !important;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    position: static !important;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+    background-color: #E24C4A;
+    color: #fff;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+    display: none;
+}
+
+.swiper-pagination-bullet {
+    background-color: rgba(255, 255, 255, 0.4);
+    opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+    background-color: white;
+}
+.contact-form input,
+.contact-form textarea,
+.contact-form select
+{
+    padding: 17px 20px 17px 20px;
+    width: 100%;
+    border-radius: 12px 12px 12px 12px;
+    color: #fff;
+    border: 1px solid #ffffff0a;
+}
+.contact-form input::placeholder,
+.contact-form textarea::placeholder,
+.contact-form select::placeholder{
+    color: #a7aabb;
+}
+.contact-form input:focus,
+.contact-form textarea:focus,
+.contact-form select:focus{
+    border: 1px solid #E24C4A;
+    outline: none;
+}
+.services-card{
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+}
+.services-card::before{
+    content: '';
+    width: 100%;
+    height: 100%;
+    border-radius: 400px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(to right, #386BB7 0%, #E24C4A 100%);
+    transform: translateY(101%);
+    transition: all .5s ease-in-out;
+}
+.services-card:hover::before{
+    transform: translateY(0);
+    border-radius: inherit;
+}
+.services-card p{
+    transition: all .3s ease-in-out;
+}
+.blog-card img{
+    transition: all .5s ease-in-out;
+}
+.services-card:hover p{
+    color: #fff !important;
+}
+.blog-card:hover  img{
+    scale: 1.1;
+}
+.text-viewer h1{
+    font-size: 28px;
+}
+.text-viewer h2{
+    font-size: 26px;
+}
+.text-viewer h3{
+    font-size: 22px;
+}
+.text-viewer h4{
+    font-size: 18px;
+}
+.text-viewer h5{
+    font-size: 18px;
+}
+.text-viewer h6{
+    font-size: 16px;
+}
+.scroll-0::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+}
+.str-video__video-preview-container{
+    border-color: #9c9c9c !important;
+}
+.str-video__video-placeholder__initials-fallback{
+    background-color: #E24C4A !important;
+}
+.policy-content ul{
+    list-style: disc;
+    padding-left: 30px;
+}
+.fc-theme-standard td, .fc-theme-standard th {
+    border: 1px solid #363434;
+}
+.fc-theme-standard .fc-scrollgrid {
+    border: 1px solid #363434;
+}
+.fc .fc-daygrid-day.fc-day-today{
+    background-color: #386bb72e;
+}
+.fc-daygrid-event{
+    white-space: wrap !important;
+}
+@media (max-width:1200px) {
+    h1{
+        font-size: 55px;
+    }
+    h2{
+        font-size: 38px;
+    }
+    h3{
+        font-size: 28px;
+    }
+    p, li{
+        font-size: 14px;
+    }
+    .container{
+        padding: 0 12px;
+    }
+    .primary-btn{
+        padding: 12px 18px;
+    }
+}
+@media (max-width:768px) {
+    h1{
+        font-size: 50px;
+    }
+    h2{
+        font-size: 35px;
+    }
+    h3{
+        font-size: 25px;
+    }
+    .floating-icons a{
+        height: 40px;
+        width: 40px;
+    }
+    .floating-icons button{
+        padding: 8 !important;
+    }
+    .floating-icons a svg{
+        height: 20px;
+        width: 20px;
+    }
+    .primary-btn{
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    input,
+    textarea,
+    select
+    {
+        padding: 10px 16px;
+    }
+}
+@media (max-width:500px) {
+    h1{
+        font-size: 45px;
+    }
+    h2{
+        font-size: 30px;
+    }
+    h3{
+        font-size: 22px;
+    }
+    .container{
+        padding: 0 10px;
+    }
+    .hero-section{
+        padding: 150px 0 80px 0;
+    }
+    .primary-btn{
+        padding: 8px 14px !important;
+        font-size: 14px;
+    }
+    .rdt_Pagination button{
+        width: 30px;
+        height: 30px;
+    }
+    .rdt_Pagination button svg{
+        width: 15px;
+        height: 15px;
+    }
+    input, textarea, select{
+        padding: 8px 14px !important;
+    }
+}
+@media (max-width:400px) {
+    h1{
+        font-size: 30px;
+    }
+    h2{
+        font-size: 24px;
+    }
+    h3{
+        font-size: 20px;
+    }
+    
+}
