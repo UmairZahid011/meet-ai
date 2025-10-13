@@ -2,7 +2,8 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { db } from "@/lib/db";
+// import { db } from "@/lib/db";
+import {pool }from '@/lib/db';
 import { JWT } from "next-auth/jwt";
 
 export async function refreshAccessToken(token: JWT): Promise<JWT> {
@@ -28,7 +29,7 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
     const newRefreshToken = refreshedTokens.refresh_token ?? token.refreshToken;
     const newAccessTokenExpires = Date.now() + refreshedTokens.expires_in * 1000;
 
-    await db.query(
+    await pool.query(
       `UPDATE users SET
         google_access_token = ?,
         google_refresh_token = ?,
@@ -46,7 +47,7 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
   } catch (error) {
     console.error("Error refreshing access token:", error);
 
-    await db.query(
+    await pool.query(
       `UPDATE users SET
         google_access_token = NULL,
         google_refresh_token = NULL,
@@ -79,7 +80,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const [result] = await db.query('SELECT * FROM users WHERE email = ?', [credentials?.email]);
+        const [result] = await pool.query('SELECT * FROM users WHERE email = ?', [credentials?.email]);
         const user = (result as any[])[0];
 
         if (user && await bcrypt.compare(credentials!.password, user.password)) {
@@ -106,11 +107,11 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        const [result] = await db.query("SELECT * FROM users WHERE email = ?", [user.email]);
+        const [result] = await pool.query("SELECT * FROM users WHERE email = ?", [user.email]);
         const existingUser = (result as any[])[0];
 
         if (!existingUser) {
-          const [insertResult] = await db.query(
+          const [insertResult] = await pool.query(
             "INSERT INTO users (name, email, plan, is_admin) VALUES (?, ?, ?, ?)",
             [user.name, user.email, "free", false]
           ) as any;
@@ -126,7 +127,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, account }) {
       if (account && user) {
         // if (account.provider === "google") {
-        //   await db.query(
+        //   await pool.query(
         //     `UPDATE users SET
         //       google_access_token = ?,
         //       google_refresh_token = ?,
@@ -142,11 +143,11 @@ export const authOptions: NextAuthOptions = {
         // }
 
         if (account?.provider === "google") {
-            const [result] = await db.query("SELECT * FROM users WHERE email = ?", [user.email]);
+            const [result] = await pool.query("SELECT * FROM users WHERE email = ?", [user.email]);
             const existingUser = (result as any[])[0];
 
             if (!existingUser) {
-                const [insertResult] = await db.query(
+                const [insertResult] = await pool.query(
                     "INSERT INTO users (name, email, plan, is_admin, provider) VALUES (?, ?, ?, ?, ?)",
                     [user.name, user.email, "free", false, "google"]
                 ) as any;

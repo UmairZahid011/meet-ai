@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/authOptions';
-import { db } from '@/lib/db';
+// import { db } from '@/lib/db';
+import { pool } from '@/lib/db';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -9,7 +10,7 @@ export async function GET() {
 
   try {
     // Step 1: Get user's plan ID
-    const [userPlanRows] = await db.query(
+    const [userPlanRows] = await pool.query(
       'SELECT plan_id FROM user_plans WHERE user_id = ?',
       [session.user.id]
     ) as [any[], any];
@@ -20,7 +21,7 @@ export async function GET() {
     }
 
     // Step 2: Get meeting_cost and agent_cost from plans table
-    const [planRows] = await db.query(
+    const [planRows] = await pool.query(
       'SELECT meeting_cost, agent_cost FROM plans WHERE id = ?',
       [planId]
     ) as [any[], any];
@@ -31,7 +32,7 @@ export async function GET() {
     }
 
     // Step 3: Get user tokens
-    const [userRows] = await db.query(
+    const [userRows] = await pool.query(
       'SELECT tokens FROM users WHERE id = ?',
       [session.user.id]
     ) as [any[], any];

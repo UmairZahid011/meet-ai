@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/authOptions';
-import { db } from '@/lib/db';
+// import { db } from '@/lib/db';
+import { pool } from '@/lib/db';
 import { Meeting, Participant } from '@/lib/types'; // Ensure Participant type is imported
 
 // export async function GET() {
@@ -9,7 +10,7 @@ import { Meeting, Participant } from '@/lib/types'; // Ensure Participant type i
 //   // if (!session) return new NextResponse('Unauthorized', { status: 401 });
 
 //   try {
-//     const [rowsResult] = await db.query('SELECT * FROM meetings');
+//     const [rowsResult] = await pool.query('SELECT * FROM meetings');
 //     // Corrected type assertion: apply directly to the rows array
 //     const rows = rowsResult as Meeting[]; 
 
@@ -38,7 +39,7 @@ export async function GET(request: Request) {
       values.push(userId);
     }
 
-    const [rowsResult] = await db.query(query, values);
+    const [rowsResult] = await pool.query(query, values);
     const rows = rowsResult as Meeting[];
 
     return NextResponse.json(rows);
@@ -60,19 +61,19 @@ export async function POST(req: NextRequest) {
       return new NextResponse('Missing required fields', { status: 400 });
     }
 
-    const [userPlanRows] = await db.query(
+    const [userPlanRows] = await pool.query(
       'SELECT plan_id FROM user_plans WHERE user_id = ?',
       [session.user.id]
     ) as [any[], any];
     const planId = userPlanRows[0]?.plan_id;
 
-    const [planRows] = await db.query(
+    const [planRows] = await pool.query(
       'SELECT meeting_cost FROM plans WHERE id = ?',
       [planId]
     ) as [any[], any];
     const meetingTokenCost = planRows[0]?.meeting_cost;
 
-    const [userRows] = await db.query(
+    const [userRows] = await pool.query(
       'SELECT tokens FROM users WHERE id = ?',
       [session.user.id]
     ) as [any[], any];
@@ -83,12 +84,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Deduct tokens
-    await db.query(
+    await pool.query(
       'UPDATE users SET tokens = tokens - ? WHERE id = ?',
       [meetingTokenCost, session.user.id]
     );
 
-    await db.query(
+    await pool.query(
       `INSERT INTO meetings (id, name, status, userId, agent_id, start_date,is_payed, participants)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
@@ -129,7 +130,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const placeholders = idsToDelete.map(() => '?').join(',');
-    await db.query(
+    await pool.query(
       `DELETE FROM meetings WHERE id IN (${placeholders})`,
       [...idsToDelete]
     );
@@ -166,7 +167,7 @@ export async function PUT(req: NextRequest) {
     // Stringify the participants array before updating the JSON column
     const participantsJson = JSON.stringify(participants || []);
 
-    await db.query(
+    await pool.query(
       `UPDATE meetings SET
          name = ?,
          status = ?,
@@ -215,7 +216,7 @@ export async function PATCH(req: NextRequest) {
       return new NextResponse('Invalid participant structure.', { status: 400 });
     }
 
-    const [rowsResult] = await db.query('SELECT participants FROM meetings WHERE id = ?', [meetingId]);
+    const [rowsResult] = await pool.query('SELECT participants FROM meetings WHERE id = ?', [meetingId]);
     const rows = rowsResult as Array<Pick<Meeting, 'participants'>>;
 
     if (!Array.isArray(rows) || rows.length === 0) {
@@ -247,12 +248,12 @@ export async function PATCH(req: NextRequest) {
 
     currentParticipants.push(newParticipant);
 
-    await db.query(
+    await pool.query(
       'UPDATE meetings SET participants = ? WHERE id = ?',
       [JSON.stringify(currentParticipants), meetingId]
     );
 
-    const updatedRowsResult = await db.query('SELECT * FROM meetings WHERE id = ?', [meetingId]);
+    const updatedRowsResult = await pool.query('SELECT * FROM meetings WHERE id = ?', [meetingId]);
     const updatedRows = updatedRowsResult as unknown as Meeting[];
 
     if (updatedRows.length === 0) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+// import { db } from '@/lib/db';
+import { pool } from '@/lib/db';
 import { Meeting } from '@/lib/types';
 
 
@@ -11,7 +12,7 @@ export async function GET(req: NextRequest, { params }: any) {
   }
 
   try {
-    const [rowsResult] = await db.query('SELECT * FROM meetings WHERE id = ?', [meetingId]);
+    const [rowsResult] = await pool.query('SELECT * FROM meetings WHERE id = ?', [meetingId]);
     const rows = rowsResult as Meeting[];
 
     if (!rows || rows.length === 0) {
@@ -77,7 +78,7 @@ export async function PATCH(req: NextRequest, { params }: any) {
       return new NextResponse('No fields provided for update.', { status: 400 });
     }
 
-    await db.query(
+    await pool.query(
       `UPDATE meetings SET ${setClause} WHERE id = ?`,
       [...updatesToApply, meetingId]
     );

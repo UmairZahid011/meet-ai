@@ -1,8 +1,9 @@
-import { db } from '@/lib/db';
+// import { db } from '@/lib/db';
+import { pool } from '@/lib/db'
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const [plans] = await db.query('SELECT * FROM plans');
+  const [plans] = await pool.query('SELECT * FROM plans');
   return NextResponse.json(plans);
 }
 
@@ -10,7 +11,7 @@ export async function POST(req: Request) {
   const body = await req.json();
   const { name, price, description, tokens, agentCost, meetingCost } = body;
 
-  await db.query(
+  await pool.query(
     'INSERT INTO plans (name, price, description, tokens, agent_cost, meeting_cost) VALUES (?, ?, ?, ?, ?, ?)',
     [name, price, description, tokens, agentCost, meetingCost]
   );
@@ -28,7 +29,7 @@ export async function PATCH(req: Request, { params }: any) {
   const body = await req.json();
   const { name, price, description, tokens, agentCost, meetingCost } = body;
 
-  await db.query(
+  await pool.query(
     `UPDATE plans 
      SET name = ?, price = ?, description = ?, tokens = ?, agent_cost = ?, meeting_cost = ? 
      WHERE id = ?`,
@@ -46,7 +47,7 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: 'planId is required' }, { status: 400 });
   }
 
-  await db.query('DELETE FROM plans WHERE id = ?', [planId]);
+  await pool.query('DELETE FROM plans WHERE id = ?', [planId]);
 
   return NextResponse.json({ message: 'Plan deleted' });
 }

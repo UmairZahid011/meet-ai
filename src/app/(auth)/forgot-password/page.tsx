@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -42,6 +43,9 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-glass-color px-3">
       <div className="w-full max-w-md p-3 md:p-8 my-[20px] space-y-6 bg-[#ffffff0a] rounded-2xl shadow-lg">
+        <Link href={'/'} className="flex items-center justify-center gap-2">
+          <Image src={'/assets/imgs/Logo-New.png'} alt='logo' height={70} width={70} className='transition-all ease-in-out duration-300'/>
+        </Link>
         <div className="text-center">
           <h3>Forgot Password</h3>
           <p className="text-gray-600">Enter your email to receive a password reset link.</p>

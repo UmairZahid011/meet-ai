@@ -110,7 +110,7 @@ export default function EditPlanPage(props: { params: Promise<{ id: string }> })
         {
           name === 'free' ?
           <>
-            <label className="text-sm font-semibold">Price</label>
+            <label className="text-sm font-semibold">Plan Name</label>
             <div className="border border-[#ffffff29] py-[14px] px-[20px] text-white rounded-[12px] cursor-no-drop">
               {price}
             </div>

@@ -118,6 +118,8 @@ import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 
 // ✅ This sub-component uses the searchParams
 function ResetPasswordInner() {
@@ -174,6 +176,9 @@ function ResetPasswordInner() {
 
   return (
     <>
+      <Link href={'/'} className="flex items-center justify-center gap-2">
+        <Image src={'/assets/imgs/Logo-New.png'} alt='logo' height={70} width={70} className='transition-all ease-in-out duration-300'/>
+      </Link>
       <div className="text-center">
         <h3>Reset Password</h3>
         <p>Enter your new password</p>

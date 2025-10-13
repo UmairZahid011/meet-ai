@@ -1,19 +1,19 @@
 export const faqs = [
   {
-    question: "What is Meetai and how does it work?",
-    answer: "Meetai is an AI-powered meeting assistant that helps you schedule calls, join meetings, record conversations, take notes, and generate summaries — all in one simple platform.",
+    question: "What is CallRio and how does it work?",
+    answer: "CallRio is an AI-powered meeting assistant that helps you schedule calls, join meetings, record conversations, take notes, and generate summaries — all in one simple platform.",
   },
   {
-    question: "Do I need to install anything to use Meetai?",
-    answer: "No downloads needed! Meetai works directly in your browser. Just schedule your meeting and join via the provided link.",
+    question: "Do I need to install anything to use CallRio?",
+    answer: "No downloads needed! CallRio works directly in your browser. Just schedule your meeting and join via the provided link.",
   },
   {
     question: "How does the AI Agent take notes during meetings?",
     answer: "The AI listens to the conversation in real-time and automatically captures key points, action items, and important details — which are then summarized and saved to your dashboard.",
   },
   {
-    question: "Is Meetai integrated with Google Calendar?",
-    answer: "Yes! Meetai syncs with Google Calendar so you can schedule meetings with ease and send invites automatically.",
+    question: "Is CallRio integrated with Google Calendar?",
+    answer: "Yes! CallRio syncs with Google Calendar so you can schedule meetings with ease and send invites automatically.",
   },
   {
     question: "Can I watch the meeting recordings later?",

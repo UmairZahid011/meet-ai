@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+// import { db } from '@/lib/db';
+import { pool } from '@/lib/db';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {});
 
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
     }
 
-    const [rows] = await db.query(
+    const [rows] = await pool.query(
       'SELECT tokens, name FROM plans WHERE id = ?',
       [planId]
     ) as any[];
@@ -44,24 +45,24 @@ export async function POST(req: NextRequest) {
     if (!plan) {
       return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
     }
-    const [planRows] = await db.query(
+    const [planRows] = await pool.query(
       'SELECT id FROM user_plans WHERE user_id = ?',
       [userId]
     ) as any[];
 
     if (planRows.length > 0) {
-      await db.query(
+      await pool.query(
         'UPDATE user_plans SET plan_id = ? WHERE user_id = ?',
         [planId, userId]
       );
     } else {
-      await db.query(
+      await pool.query(
         'INSERT INTO user_plans (user_id, plan_id) VALUES (?, ?)',
         [userId, planId]
       );
     }
 
-    await db.query(
+    await pool.query(
       'UPDATE users SET plan = ?, tokens = tokens + ? WHERE id = ?',
       [plan.name, plan.tokens, userId]
     );

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+// import { db } from '@/lib/db';
+import { pool } from '@/lib/db'
 
 export async function GET(_: NextRequest, { params }: any) {
     const {type} =  params
-    const [rows] = await db.query('SELECT * FROM policies WHERE type = ?', [type]) as any;
+    const [rows] = await pool.query('SELECT * FROM policies WHERE type = ?', [type]) as any;
     if (!rows.length) {
         return NextResponse.json({ content: '' });
     }
@@ -13,12 +14,12 @@ export async function GET(_: NextRequest, { params }: any) {
 export async function PATCH(req: NextRequest, { params }: any) {
   const { content } = await req.json();
   const {type} =  params
-  const [existing] = await db.query('SELECT * FROM policies WHERE type = ?', [type]) as any;
+  const [existing] = await pool.query('SELECT * FROM policies WHERE type = ?', [type]) as any;
 
   if (existing.length > 0) {
-    await db.query('UPDATE policies SET content = ? WHERE type = ?', [content, type]);
+    await pool.query('UPDATE policies SET content = ? WHERE type = ?', [content, type]);
   } else {
-    await db.query('INSERT INTO policies (type, content) VALUES (?, ?)', [type, content]);
+    await pool.query('INSERT INTO policies (type, content) VALUES (?, ?)', [type, content]);
   }
 
   return NextResponse.json({ success: true });
@@ -26,6 +27,6 @@ export async function PATCH(req: NextRequest, { params }: any) {
 
 export async function DELETE(_: NextRequest, { params }: any) {
     const {type} =  params
-    await db.query('DELETE FROM policies WHERE type = ?', [type]);
+    await pool.query('DELETE FROM policies WHERE type = ?', [type]);
     return NextResponse.json({ success: true });
 }

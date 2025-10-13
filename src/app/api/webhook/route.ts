@@ -8,7 +8,8 @@ import {
 import { NextResponse, NextRequest } from "next/server";
 import { summarizeTranscriptText } from "../openai";
 import { fetchTranscriptFromURL } from "@/lib/utils";
-import { db } from "@/lib/db";
+// import { db } from "@/lib/db";
+import {pool }from '@/lib/db';
 import { Agent, Meeting } from "@/lib/types";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -82,19 +83,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing meetingId" }, { status: 400 });
     }
 
-    const [rows] = await db.query("SELECT * FROM meetings WHERE id = ?", [meetingId]) as unknown as [Meeting[], any];
+    const [rows] = await pool.query("SELECT * FROM meetings WHERE id = ?", [meetingId]) as unknown as [Meeting[], any];
     const [existingMeeting] = rows;
 
     if (!existingMeeting) {
       return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
     }
 
-    await db.query(
+    await pool.query(
       "UPDATE meetings SET status = ?, started_at = ? WHERE id = ?",
       ["Active", new Date().toISOString(), meetingId]
     );
 
-    const [agentRows] = await db.query("SELECT * FROM agents WHERE id = ?", [existingMeeting.agent_id]) as unknown as [Agent[], any];
+    const [agentRows] = await pool.query("SELECT * FROM agents WHERE id = ?", [existingMeeting.agent_id]) as unknown as [Agent[], any];
     const [existingAgent] = agentRows;
 
     if (!existingAgent) {
@@ -183,10 +184,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing meetingId" }, { status: 400 });
     }
 
-    const [meeting] = await db.query("SELECT * FROM meetings WHERE id = ? AND status = 'Active'", [meetingId]) as unknown as [Meeting];
+    const [meeting] = await pool.query("SELECT * FROM meetings WHERE id = ? AND status = 'Active'", [meetingId]) as unknown as [Meeting];
 
     if (meeting) {
-      await db.query("UPDATE meetings SET status = ?, ended_at = ? WHERE id = ?", ["Processing", new Date().toISOString(), meetingId]);
+      await pool.query("UPDATE meetings SET status = ?, ended_at = ? WHERE id = ?", ["Processing", new Date().toISOString(), meetingId]);
     }
 
     return NextResponse.json({ success: true });
@@ -202,17 +203,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing meetingId" }, { status: 400 });
     }
 
-    const [meeting] = await db.query("SELECT * FROM meetings WHERE id = ?", [meetingId]) as unknown as [Meeting];
+    const [meeting] = await pool.query("SELECT * FROM meetings WHERE id = ?", [meetingId]) as unknown as [Meeting];
     const Transcript = await fetchTranscriptFromURL(event.call_transcription.url);
 
     if (Transcript && meeting) {
-      await db.query("UPDATE meetings SET transcript_url = ? WHERE id = ?", [event.call_transcription.url, meetingId]);
+      await pool.query("UPDATE meetings SET transcript_url = ? WHERE id = ?", [event.call_transcription.url, meetingId]);
     }
 
     const summary = await summarizeTranscriptText(Transcript);
 
     if (meeting && summary) {
-      await db.query("UPDATE meetings SET summary = ? WHERE id = ?", [summary, meetingId]);
+      await pool.query("UPDATE meetings SET summary = ? WHERE id = ?", [summary, meetingId]);
     }
 
     return NextResponse.json({ success: true });
@@ -226,9 +227,9 @@ export async function POST(req: NextRequest) {
   //     return NextResponse.json({ error: "Missing meetingId" }, { status: 400 });
   //   }
 
-  //   const [meeting] = await db.query("SELECT * FROM meetings WHERE id = ?", [meetingId]);
+  //   const [meeting] = await pool.query("SELECT * FROM meetings WHERE id = ?", [meetingId]);
   //   if (meeting && event.call_recording.url) {
-  //     await db.query("UPDATE meetings SET status = ?, recording_url = ? WHERE id = ?", ["Completed", event.call_recording.url, meetingId]);
+  //     await pool.query("UPDATE meetings SET status = ?, recording_url = ? WHERE id = ?", ["Completed", event.call_recording.url, meetingId]);
   //   }
   //   return NextResponse.json({ success: true });
   // }
@@ -263,7 +264,7 @@ export async function POST(req: NextRequest) {
 //     // Save relative path to DB (e.g., /recordings/myfile.mp4)
 //     const relativePath = `/recordings/${fileName}`;
 
-//     await db.query(
+//     await pool.query(
 //       "UPDATE meetings SET status = ?, recording_url = ? WHERE id = ?",
 //       ["Completed", relativePath, meetingId]
 //     );
@@ -291,7 +292,7 @@ else if (eventType === "call.recording_ready") {
     
 
     // Save to DB
-    await db.query(
+    await pool.query(
       "UPDATE meetings SET status = ?, recording_url = ? WHERE id = ?",
       ["Completed", result, meetingId]
     );

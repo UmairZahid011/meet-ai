@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { db } from '@/lib/db';
+// import { db } from '@/lib/db';
+import {pool }from '@/lib/db';
 import { authOptions } from '@/lib/authOptions';
 
 export async function GET(
@@ -13,7 +14,7 @@ export async function GET(
   const awaitedparam =  params
   const agentId = awaitedparam.id;
 
-  const [rows] = await db.query(
+  const [rows] = await pool.query(
     'SELECT id, name, instruction FROM agents WHERE id = ? AND userId = ?',
     [agentId, session.user?.id]
   );

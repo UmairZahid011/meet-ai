@@ -53,10 +53,10 @@ export default function Home() {
           </div>
 
           <div className="text-center max-w-[750px] mx-auto flex flex-col gap-[20px] items-center" data-aos="fade-up" data-aos-delay="600">
-            <h4 data-aos="fade-down" className="small-heading" data-aos-delay="700">Welcome to Meetai</h4>
+            <h4 data-aos="fade-down" className="small-heading" data-aos-delay="700">Welcome to CallRio</h4>
             <h1 data-aos="zoom-in-up" data-aos-delay="800">AI-Driven Solutions for a Smarter Tomorrow</h1>
             <p data-aos="fade-up" data-aos-delay="900">
-              Easily schedule a meeting with your AI Agent, have meaningful conversations, and let Meetai do the heavy lifting — taking notes, summarizing key points, and giving you a full video recording, all in your dashboard. It&apos;s smart, simple, and built to save you time.
+              Easily schedule a meeting with your AI Agent, have meaningful conversations, and let CallRio do the heavy lifting — taking notes, summarizing key points, and giving you a full video recording, all in your dashboard. It&apos;s smart, simple, and built to save you time.
             </p>
             <Link href={islogin && !isAdmin ? '/user' : '/login'}>
               <button className="primary-btn w-[50px] md:w-[100px] h-[50px] md:h-[100px] mt-[50px]" data-aos="zoom-in" data-aos-delay="1000">
@@ -102,7 +102,7 @@ export default function Home() {
                 <button className="w-[100px] h-[100px] -rotate-45 hover:rotate-0 transition-all duration-300 ease-in-out p-[15px]" data-aos="fade-right" data-aos-delay="100">
                   <svg xmlns="http://www.w3.org/2000/svg" width="82" height="82" viewBox="0 0 82 82" fill="none"><g clipPath="url(#clip0_1181_21)"><path d="M81.014 41.014L43.9568 78.0713L37.6288 71.7432L63.9438 45.4282L1.69582 45.2535L1.67076 36.3292L63.9187 36.504L37.4556 10.0408L43.7482 3.74819L81.014 41.014Z" stroke="url(#paint0_linear_1181_21)"></path></g><defs><linearGradient id="paint0_linear_1181_21" x1="17.6675" y1="19.5589" x2="60.3419" y2="62.2333" gradientUnits="userSpaceOnUse"><stop stopColor="#386BB7"></stop><stop offset="1" stopColor="#E24C4A"></stop></linearGradient><clipPath id="clip0_1181_21"><rect width="82" height="82" fill="white"></rect></clipPath></defs></svg>
                 </button>
-                <p data-aos="fade-left" data-aos-delay="150">At Meetai, we blend advanced AI technology with real human understanding to create smart solutions that truly make a difference. We&apos;re not just building tools  we&apos;re transforming how businesses connect, grow, and thrive. With innovation at our core and purpose in every line of code, we help you work smarter, not harder.</p>
+                <p data-aos="fade-left" data-aos-delay="150">At CallRio, we blend advanced AI technology with real human understanding to create smart solutions that truly make a difference. We&apos;re not just building tools  we&apos;re transforming how businesses connect, grow, and thrive. With innovation at our core and purpose in every line of code, we help you work smarter, not harder.</p>
               </div>
             </div>
           </div>

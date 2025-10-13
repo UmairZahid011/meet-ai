@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Loader2 } from 'lucide-react';
+import { Eye, EyeClosed, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setshowPassword] = useState(true);
 
   const handleLogin = async () => {
     setLoading(true);
@@ -30,6 +32,7 @@ export default function LoginPage() {
       setError(res.error.includes('Google')
         ? 'You signed up with Google. Please login using Google.'
         : 'Invalid email or password.');
+      setLoading(false);
       return;
     }
     toast.success('Login Successful')
@@ -50,9 +53,12 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-glass-color px-3">
       <div className="w-full max-w-md my-[20px] p-3 md:p-8 space-y-6 bg-[#ffffff0a] rounded-2xl shadow-lg">
+        <Link href={'/'} className="flex items-center justify-center gap-2">
+          <Image src={'/assets/imgs/Logo-New.png'} alt='logo' height={70} width={70} className='transition-all ease-in-out duration-300'/>
+        </Link>
         <div className="text-center">
           <h3 className="">Sign In</h3>
-          <p className="text-gray-600">to continue to your dashboard</p>
+          {/* <p className="text-gray-600">to continue to your dashboard</p> */}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
@@ -60,17 +66,29 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             type="email"
+            placeholder='Enter your Email'
             required
             className="w-full mb-3 px-4 py-2 border rounded-xl"
           />
           <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-          <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            required
-            className="w-full mb-4 px-4 py-2 border rounded-xl"
-          />
+          <div className="relative mb-4">
+            <input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type={showPassword ? 'password' : 'text'}
+              placeholder='Enter your Password'
+              required
+              className="w-full px-4 py-2 border rounded-xl"
+            />
+            <span className='absolute top-1/2 -translate-y-1/2 right-2 cursor-pointer text-white' onClick={()=>setshowPassword(!showPassword)}>
+              {
+                showPassword ?
+                  <EyeClosed size={20} />
+                  :
+                  <Eye size={20}/>
+              }
+            </span>
+          </div>
         </div>
 
         {error && <p className="text-red-500 text-sm text-center -mt-3">{error}</p>}

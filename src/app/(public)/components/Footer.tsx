@@ -8,6 +8,7 @@ import {
   Droplet
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -95,10 +96,7 @@ const Footer = () => {
           <div className="container">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
               <Link href={'/'} className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-primary-gradiant rounded-full flex items-center justify-center">
-                  <Droplet className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-white font-semibold text-xl">MeetAi.</span>
+                <Image src={'/assets/imgs/Logo-New.png'} alt='logo' height={70} width={70} className='transition-all ease-in-out duration-300'/>
               </Link>
               <p className="text-gray-400">Copyright © 2025 All Rights Reserved.</p>
             </div>

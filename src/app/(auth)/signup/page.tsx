@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Eye, EyeClosed, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -14,6 +15,9 @@ export default function SignupPage() {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);  
   const router = useRouter();
+  const [showPassword, setshowPassword] = useState(true);
+  const [confirmPassword, setconfirmPassword] = useState(true);
+  
 
   const handleRegister = async () => {
     setError('');
@@ -61,6 +65,7 @@ export default function SignupPage() {
       router.push('/login');
     } catch (err) {
       console.error(err);
+      setLoading(false);
       toast("Something went wrong")
     }
   };
@@ -68,9 +73,11 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-glass-color px-3">
       <div className="w-full max-w-md p-3 md:p-8 my-[20px] space-y-6 bg-[#ffffff0a] rounded-2xl">
+        <Link href={'/'} className="flex items-center justify-center gap-2">
+                  <Image src={'/assets/imgs/Logo-New.png'} alt='logo' height={70} width={70} className='transition-all ease-in-out duration-300'/>
+                </Link>
         <div className="text-center">
           <h3 >Create a new account</h3>
-          <p>Sign Up to get started</p>
         </div>
         <div className="space-y-4">
           <div>
@@ -81,6 +88,7 @@ export default function SignupPage() {
               name="name"
               type="text"
               required
+              placeholder='Full Name'
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl"
             />
           </div>
@@ -93,6 +101,7 @@ export default function SignupPage() {
               onChange={e => setEmail(e.target.value)}
               name="email"
               type="email"
+              placeholder='Enter your Email'
               required
               className="mt-1 "
             />
@@ -102,28 +111,48 @@ export default function SignupPage() {
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
+            <div className="relative mb-4">
             <input
               value={password}
-              onChange={e => setPassword(e.target.value)}
-              name="password"
-              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+              type={showPassword ? 'password' : 'text'}
+              placeholder='Enter your Password'
               required
-              className="mt-1 "
+              className="w-full px-4 py-2 border rounded-xl"
             />
+            <span className='absolute top-1/2 -translate-y-1/2 right-2 cursor-pointer text-white' onClick={()=>setshowPassword(!showPassword)}>
+              {
+                showPassword ?
+                  <EyeClosed size={20} />
+                  :
+                  <Eye size={20}/>
+              }
+            </span>
+          </div>
           </div>
 
           <div>
             <label htmlFor="confirm" className="block text-sm font-medium text-gray-700">
               Confirm Password
             </label>
+            <div className="relative mb-4">
             <input
               value={confirm}
-              onChange={e => setConfirm(e.target.value)}
-              name="confirm"
-              type="password"
+              onChange={(e) => setConfirm(e.target.value)}
+              type={confirmPassword ? 'password' : 'text'}
+              placeholder='Enter your Password'
               required
-              className="mt-1 "
+              className="w-full px-4 py-2 border rounded-xl"
             />
+            <span className='absolute top-1/2 -translate-y-1/2 right-2 cursor-pointer text-white' onClick={()=>setconfirmPassword(!confirmPassword)}>
+              {
+                confirmPassword ?
+                  <EyeClosed size={20} />
+                  :
+                  <Eye size={20}/>
+              }
+            </span>
+          </div>
           </div>
           {
             error !== '' &&

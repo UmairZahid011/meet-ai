@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+// import { db } from '@/lib/db';
+import {pool }from '@/lib/db'
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Email address is required.' }, { status: 400 });
     }
 
-    const [result] = await db.query(
+    const [result] = await pool.query(
       'SELECT id, email, name FROM users WHERE email = ?',
       [email]
     );
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
     const resetToken = crypto.randomBytes(32).toString('hex');
     const resetTokenExpires = new Date(Date.now() + 3600000); // 1 hour
 
-    await db.query(
+    await pool.query(
       'UPDATE users SET reset_password_token = ?, reset_password_expires = ? WHERE id = ?',
       [resetToken, resetTokenExpires, user.id]
     );
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     // Email content
     const mailOptions = {
-      from: `"Meet Ai" <${process.env.SMTP_EMAIL}>`,
+      from: `"CallRio" <${process.env.SMTP_EMAIL}>`,
       to: user.email,
       subject: 'Password Reset Request',
       text: `Hi ${user.name || user.email},\n\nPlease use the following link to reset your password:\n\n${resetUrl}\n\nThis link will expire in 1 hour.\n\nIf you didn't request this, you can ignore this email.`,

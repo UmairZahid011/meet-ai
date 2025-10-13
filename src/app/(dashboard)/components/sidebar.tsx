@@ -28,7 +28,7 @@ export const Sidebar = ({ isGoogleAuth, isAdmin }: SidebarProps) => {
                   <div className="w-8 h-8 bg-primary-gradiant rounded-full flex items-center justify-center">
                   <Droplet className="w-4 h-4 text-white" />
                   </div>
-                  <span className="text-white font-semibold text-xl">MeetAi.</span>
+                  <span className="text-white font-semibold text-xl">CallRio.</span>
               </div>
           </Link>
         </div>

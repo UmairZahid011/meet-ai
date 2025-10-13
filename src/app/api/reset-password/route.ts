@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+// import { db } from '@/lib/db';
+import { pool } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 
 export async function POST(req: NextRequest) {
@@ -10,7 +11,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Token and new password are required.' }, { status: 400 });
     }
 
-    const [result] = await db.query(
+    const [result] = await pool.query(
       'SELECT id, reset_password_expires FROM users WHERE reset_password_token = ?',
       [token]
     );
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await db.query(
+    await pool.query(
       'UPDATE users SET password = ?, reset_password_token = NULL, reset_password_expires = NULL WHERE id = ?',
       [hashedPassword, user.id]
     );

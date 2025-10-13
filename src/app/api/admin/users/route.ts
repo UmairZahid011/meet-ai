@@ -1,14 +1,15 @@
-import { db } from '@/lib/db';
+// import { db } from '@/lib/db';
+import { pool } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Utility: Fetch related counts
 async function getUserCounts(userId: number) {
-  const [[{ meetingCount }]] = await db.query(
+  const [[{ meetingCount }]] = await pool.query(
     'SELECT COUNT(*) as meetingCount FROM meetings WHERE userId = ?',
     [userId]
   ) as any;
 
-  const [[{ agentCount }]] = await db.query(
+  const [[{ agentCount }]] = await pool.query(
     'SELECT COUNT(*) as agentCount FROM agents WHERE userId = ?',
     [userId]
   ) as any;
@@ -19,7 +20,7 @@ async function getUserCounts(userId: number) {
 // GET: Fetch all users
 export async function GET() {
   try {
-    const [users] = await db.query(
+    const [users] = await pool.query(
       'SELECT id, name, email, plan, status FROM users'
     ) as any;
 
@@ -43,7 +44,7 @@ export async function DELETE(req: NextRequest) {
     const { id } = await req.json();
     if (!id) return NextResponse.json({ message: 'Missing user ID' }, { status: 400 });
 
-    await db.query('DELETE FROM users WHERE id = ?', [id]);
+    await pool.query('DELETE FROM users WHERE id = ?', [id]);
 
     return NextResponse.json({ message: 'User deleted successfully' });
   } catch (error) {
@@ -65,7 +66,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ message: 'Invalid status' }, { status: 400 });
     }
 
-    await db.query('UPDATE users SET status = ? WHERE id = ?', [status, id]);
+    await pool.query('UPDATE users SET status = ? WHERE id = ?', [status, id]);
 
     return NextResponse.json({ message: 'User status updated successfully' });
   } catch (error) {

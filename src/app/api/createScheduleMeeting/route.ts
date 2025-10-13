@@ -1,4 +1,5 @@
-import { db } from "@/lib/db";
+// import { db } from "@/lib/db";
+import { pool } from '@/lib/db';
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import { getFreshGoogleAccessToken } from "@/lib/googleAuthUtils";
@@ -11,7 +12,7 @@ export async function POST(req: NextRequest) {
   let isPayed = 0;
 
   try {
-    const [[userPlan]] = await db.query(
+    const [[userPlan]] = await pool.query(
       'SELECT plan_id FROM user_plans WHERE user_id = ?',
       [existingMeeting.userId]
     ) as [any[], any];
@@ -20,12 +21,12 @@ export async function POST(req: NextRequest) {
       return new NextResponse('User does not have a plan', { status: 404 });
     }
 
-    const [[plan]] = await db.query(
+    const [[plan]] = await pool.query(
       'SELECT meeting_cost, agent_cost FROM plans WHERE id = ?',
       [userPlan.plan_id]
     ) as [any[], any];
 
-    const [[user]] = await db.query(
+    const [[user]] = await pool.query(
       'SELECT tokens FROM users WHERE id = ?',
       [existingMeeting.userId]
     ) as [any[], any];
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
       isPayed = 1;
 
       // Deduct tokens
-      await db.query(
+      await pool.query(
         'UPDATE users SET tokens = tokens - ? WHERE id = ?',
         [meeting_cost, existingMeeting.userId]
       );
@@ -117,7 +118,7 @@ export async function POST(req: NextRequest) {
       participants,
     } = newMeeting;
 
-    await db.query(
+    await pool.query(
       `INSERT INTO meetings 
         (id, name, status, started_at, ended_at, recording_url, transcript_url, summary, start_date, userId, agent_id, is_payed, participants)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,

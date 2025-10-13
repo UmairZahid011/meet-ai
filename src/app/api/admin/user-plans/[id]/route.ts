@@ -1,4 +1,5 @@
-import { db } from '@/lib/db';
+// import { db } from '@/lib/db';
+import {pool }from '@/lib/db';
 import { NextResponse } from 'next/server';
 
 export async function GET(
@@ -14,7 +15,7 @@ export async function GET(
     }
 
     try {
-        const [rows]:any = await db.execute(
+        const [rows]:any = await pool.execute(
         `
         SELECT 
             user_plans.id,
