@@ -13,6 +13,7 @@ import {
 import { Bot, MoreVertical, Trash } from 'lucide-react';
 import { Agent } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function AgentDetail() {
   const { agentId } = useParams();
@@ -20,6 +21,7 @@ export default function AgentDetail() {
   const [agent, setAgent] = useState<Agent | null>(null);
   // const [meetingsCount, setMeetingsCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  usePageTitle("Billing — Plans, Payments, and Usage History")
 
   useEffect(() => {
     const fetchAgentDetail = async () => {

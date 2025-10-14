@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react'
 import { EventInput, EventContentArg } from '@fullcalendar/core'
 import { Loader2 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 interface GoogleCalendarEvent {
   summary: string
@@ -21,6 +22,7 @@ export default function CalendarPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedEvent, setSelectedEvent] = useState<any | null>(null)
   const { status } = useSession()
+  usePageTitle("Upcoming Calls — Organized and Synced with Google Calendar")
 
   useEffect(() => {
     if (status === 'unauthenticated') {

@@ -10,6 +10,7 @@ import { convertToBase64 } from '@/lib/utils';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import Image from 'next/image';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function CreateBlogPage() {
   const [title, setTitle] = useState('');
@@ -17,7 +18,7 @@ export default function CreateBlogPage() {
   const [image, setImage] = useState<string>(''); // base64
   // const [imageFile, setImageFile] = useState<File | null>(null); // for preview
   const [loading, setLoading] = useState(false);
-
+  usePageTitle("Blog Management — Publish and Update Articles")
   const router = useRouter();
 
   const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {

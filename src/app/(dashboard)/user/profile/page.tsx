@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -15,6 +16,7 @@ export default function ProfilePage() {
   const [confirmPass, setConfirmPass] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
+  usePageTitle("Your Profile — Manage Account and Personal Info")
 
   useEffect(() => {
     const fetchUser = async () => {

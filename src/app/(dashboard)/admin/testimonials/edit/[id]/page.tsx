@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { convertToBase64 } from '@/lib/utils';
 import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function EditTestimonialPage() {
   const [form, setForm] = useState({
@@ -19,6 +20,7 @@ export default function EditTestimonialPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const params = useParams();
+  usePageTitle("User Feedback — Real Stories, Real Impact")
 
   useEffect(() => {
     const fetchData = async () => {

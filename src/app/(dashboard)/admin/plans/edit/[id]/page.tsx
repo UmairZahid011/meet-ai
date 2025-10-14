@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function EditPlanPage(props: { params: Promise<{ id: string }> }) {
   const [loading, setLoading] = useState(false);
@@ -20,6 +21,7 @@ export default function EditPlanPage(props: { params: Promise<{ id: string }> })
 
   const router = useRouter();
   const { id: planId } = use(props.params);
+  usePageTitle("Subscription Plans — Control Pricing and Features")
 
   useEffect(() => {
   if (!planId) {

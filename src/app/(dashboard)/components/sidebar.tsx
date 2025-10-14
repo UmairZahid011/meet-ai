@@ -1,6 +1,7 @@
 'use client'
 import { adminLinks, userLinks } from "@/constants/menu-constants";
 import { Droplet, Menu } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -22,14 +23,9 @@ export const Sidebar = ({ isGoogleAuth, isAdmin }: SidebarProps) => {
       <div className={`bg-layer bg-[#ffffff19] fixed w-full h-full min-h-screen z-[89] top-0 left-0 lg:hidden ${isOpen ? 'visible' : 'hidden'}`} onClick={()=>{setisOpen(!isOpen)}}>
       </div>
       <aside className={`min-w-[280px] lg:bg-[#101010] bg-black z-90 shadow-lg transition-all duration-300 ease-in-out min-h-screen max-h-screen overflow-y-auto p-4 fixed left-0 top-0 scroll-0 lg:translate-x-0 ${isOpen ? 'translate-x-0' : 'translate-x-[-100%]'}`}>
-        <div className="mb-[50px] flex lg:justify-start justify-center items-center gap-2">
+        <div className="mb-[50px] flex justify-center items-center gap-2">
           <Link href={'/'}>
-              <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-primary-gradiant rounded-full flex items-center justify-center">
-                  <Droplet className="w-4 h-4 text-white" />
-                  </div>
-                  <span className="text-white font-semibold text-xl">CallRio.</span>
-              </div>
+              <Image src={'/assets/imgs/Logo-New.png'} alt='logo' height={80} width={80} className='transition-all ease-in-out duration-300' />
           </Link>
         </div>
 

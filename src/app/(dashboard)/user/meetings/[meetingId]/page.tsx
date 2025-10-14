@@ -10,6 +10,7 @@ import { fetchTranscript } from '@/lib/utils';
 import { Loader, Loader2, Send } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MarkdownViewer from '@/components/markdown-viewer';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function MeetingDetail() {
   const { meetingId } = useParams();
@@ -20,6 +21,7 @@ export default function MeetingDetail() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Master loading state
+  usePageTitle("Your Meetings — AI Notes, Summaries, and Insights")
 
   useEffect(() => {
     const fetchMeeting = async () => {

@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 type Inquiry = {
   id: number;
@@ -25,6 +26,7 @@ export default function AdminInquiriesPage() {
   const [loading, setLoading] = useState(true);
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  usePageTitle("Inquiries — Handle Messages and Support Requests")
 
   useEffect(() => {
     const fetchData = async () => {

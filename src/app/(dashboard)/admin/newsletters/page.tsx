@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { AppDataTable } from '@/components/dataTable';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 type Newsletter = {
   id: number;
@@ -12,6 +13,7 @@ type Newsletter = {
 export default function NewsletterListPage() {
     const [data, setData] = useState<Newsletter[]>([]);
     const [loading, setLoading] = useState(true);
+    usePageTitle("Newsletter — Manage Subscribers and Campaigns")
 
 
     useEffect(() => {

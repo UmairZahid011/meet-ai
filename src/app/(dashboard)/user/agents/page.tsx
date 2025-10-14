@@ -26,6 +26,7 @@ import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { openModal } from '@/store/modalSlice';
 import { useDispatch } from 'react-redux';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function AgentsView() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -36,6 +37,7 @@ export default function AgentsView() {
   const [selectedPurpose, setSelectedPurpose] = useState('');
   const [loading, setLoading] = useState(false);
   const [agentloading, setagentLoading] = useState(true);
+  usePageTitle("Billing — Plans, Payments, and Usage History")
   
   const dispatch = useDispatch();
   

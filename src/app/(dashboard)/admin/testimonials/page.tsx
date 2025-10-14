@@ -18,12 +18,14 @@ import {
   DialogClose
 } from '@/components/ui/dialog';
 import Image from 'next/image';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function TestimonialsPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const router = useRouter();
+  usePageTitle("User Feedback — Real Stories, Real Impact")
 
   useEffect(() => {
     const fetchTestimonials = async () => {

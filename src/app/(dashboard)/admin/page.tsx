@@ -54,7 +54,7 @@ export default function Dashboard() {
     { name: 'User Name', selector: (row: UserPlan) => row.user_name, sortable: true },
     { name: 'Plan ID', selector: (row: UserPlan) => row.plan_id, sortable: true },
     { name: 'Plan Name', selector: (row: UserPlan) => row.plan_name, sortable: true },
-    { name: 'Purchased At', selector: (row: UserPlan) => new Date(row.updated_at).toLocaleString(), sortable: true },
+    { name: 'Purchased At', selector: (row: UserPlan) => new Date(row.updated_at,).toLocaleString(), sortable: true },
   ];
 
   return (
@@ -62,7 +62,9 @@ export default function Dashboard() {
       <h2 className="text-2xl font-bold">Admin Dashboard</h2>
 
       {loading ? (
-        <Loader2 className="w-10 h-10 animate-spin text-white text-center" />
+        <div className="flex justify-center items-center">
+          <Loader2 className="w-10 h-10 animate-spin text-white text-center" />
+        </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-6">
           <Card className="p-5 rounded-2xl">

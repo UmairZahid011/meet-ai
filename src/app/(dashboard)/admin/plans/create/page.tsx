@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function CreatePlanPage() {
   const [loading, setLoading] = useState(false);
@@ -15,6 +16,7 @@ export default function CreatePlanPage() {
   const [agentCost, setAgentCost] = useState(0);
   const [meetingCost, setMeetingCost] = useState(0);
   const router = useRouter();
+  usePageTitle("Subscription Plans — Control Pricing and Features")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

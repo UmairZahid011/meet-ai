@@ -33,8 +33,8 @@ export default function Header() {
       }
     };
 
-    fetchUser(); // Initial fetch
-    const interval = setInterval(fetchUser, 10000); // every 10s instead of 5s
+    fetchUser();
+    const interval = setInterval(fetchUser, 10000);
 
     return () => {
       isMounted = false;
@@ -55,9 +55,12 @@ export default function Header() {
   const userInitial = user.name?.[0]?.toUpperCase() || 'U';
 
   return (
-    <header className="w-full flex justify-end p-4">
+    <header className="w-full flex justify-end p-4 min-h-[40px]">
       <div className="flex gap-4 items-center">
-        <Badge variant={'active'} className='!py-2 px-4 leading-1 h-fit'>Tokens : {user.tokens}</Badge>
+        {
+          !user.is_admin && 
+          <Badge variant={'active'} className='!py-2 px-4 leading-1 h-fit'>Tokens : {user.tokens}</Badge>
+        }
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             {user.image ? (

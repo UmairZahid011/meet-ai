@@ -230,10 +230,10 @@ const Header = () => {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-5 list-none">
               <li><Link href="/" className={pathname === '/' ? 'active' : ''}>Home</Link></li>
-              <li><span onClick={() => handleScrollToSection('about')} className={`text-white ${pathname === '/#about' ? 'active' : ''}`}>About Us</span></li>
-              <li><span onClick={() => handleScrollToSection('feature')} className={`text-white ${pathname === '/#feature' ? 'active' : ''}`}>Features</span></li>
+              <li><span onClick={() => handleScrollToSection('about')} className={`text-white w-fit ${pathname === '/#about' ? 'active' : ''}`}>About Us</span></li>
+              <li><span onClick={() => handleScrollToSection('feature')} className={`text-white w-fit ${pathname === '/#feature' ? 'active' : ''}`}>Features</span></li>
               <li><Link href="/blogs" className={pathname === '/blogs' ? 'active' : ''}>Blogs</Link></li>
-              <li><span onClick={() => handleScrollToSection('contact')} className={`text-white ${pathname === '/#contact' ? 'active' : ''}`}>Contact Us</span></li>
+              <li><span onClick={() => handleScrollToSection('contact')} className={`text-white w-fit ${pathname === '/#contact' ? 'active' : ''}`}>Contact Us</span></li>
             </nav>
 
             {/* Mobile Hamburger Button */}

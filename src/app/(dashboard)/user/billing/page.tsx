@@ -5,12 +5,14 @@ import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { CheckCircle, Loader2 } from 'lucide-react';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function BillingPage() {
   const [plans, setPlans] = useState([]);
   const [loading, setloading] = useState(true);
   const { data: session } = useSession();
   const userId = session?.user?.id;
+  usePageTitle("Billing — Plans, Payments, and Usage History")
 
   useEffect(() => {
     axios.get('/api/admin/plans').then((res) => setPlans(res.data)).finally(()=>setloading(false));

@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { Loader, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -8,6 +9,7 @@ import { toast } from 'sonner';
 
 export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
+  const [fetchloading, setfetchLoading] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [currentPass, setCurrentPass] = useState('');
@@ -15,15 +17,23 @@ export default function ProfilePage() {
   const [confirmPass, setConfirmPass] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
+  usePageTitle("Admin Profile — Manage Your Account and Preferences")
 
   useEffect(() => {
     const fetchUser = async () => {
-      const res = await fetch('/api/user');
-      if (!res.ok) return toast.error('Failed to load profile');
-      const data = await res.json();
-      setName(data.name || '');
-      setEmail(data.email || '');
-      setImagePreview(data.image || '');
+      try {
+        setfetchLoading(true)
+        const res = await fetch('/api/user');
+        if (!res.ok) return toast.error('Failed to load profile');
+        const data = await res.json();
+        setName(data.name || '');
+        setEmail(data.email || '');
+        setImagePreview(data.image || '');
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setfetchLoading(false)
+      }
     };
     fetchUser();
   }, []);
@@ -62,72 +72,81 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10 p-4 border rounded-xl bg-foreground">
-      <h3 className="text-xl font-bold mb-4">Update Profile</h3>
-
+    <div className="max-w-lg mx-auto mt-10 p-4 border rounded-xl bg-foreground relative min-h-[60vh]">
       {
-       imagePreview &&
-        <Image
-          width={1000}
-          height={1000}
-          src={image ? URL.createObjectURL(image) : imagePreview || '/default-avatar.png'}
-          className="w-20 h-20 mx-auto mb-4 rounded-full object-cover"
-          alt="Profile"
-        />
+        fetchloading ?
+        <div className='w-full h-full bg-black/30 flex justify-center items-center absolute top-0 left-0 rounded-xl'>
+          <Loader2 className='text-white animate-spin'/>
+          </div>
+          :
+          <>
+            <h3 className="text-xl font-bold mb-4">Update Profile</h3>
+
+            {
+            imagePreview &&
+              <Image
+                width={1000}
+                height={1000}
+                src={image ? URL.createObjectURL(image) : imagePreview || '/default-avatar.png'}
+                className="w-20 h-20 mx-auto mb-4 rounded-full object-cover"
+                alt="Profile"
+              />
+            }
+
+            <input
+              className="mb-4"
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+
+            <input
+              className="mb-4 cursor-not-allowed"
+              value={email}
+              disabled
+            />
+
+            <input
+              type="file"
+              accept="image/*"
+              className="mb-4"
+              onChange={(e) => setImage(e.target.files?.[0] || null)}
+            />
+
+            <input
+              className="mb-4"
+              type="password"
+              placeholder="Current Password"
+              value={currentPass}
+              onChange={(e) => setCurrentPass(e.target.value)}
+            />
+            <input
+              className="mb-4"
+              type="password"
+              placeholder="New Password"
+              value={newPass}
+              onChange={(e) => setNewPass(e.target.value)}
+            />
+            <input
+              className="w-full mb-4 p-2 border rounded-lg"
+              type="password"
+              placeholder="Confirm New Password"
+              value={confirmPass}
+              onChange={(e) => setConfirmPass(e.target.value)}
+            />
+            <Button
+              onClick={handleUpdate}
+              className="w-full"
+              disabled={loading}
+            >
+              {
+                loading ?
+                <Loader2 className='animate-spin'/> :
+                "Save Changes"
+              }
+            </Button>
+          </>
       }
-
-      <input
-        className="mb-4"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-
-      <input
-        className="mb-4 cursor-not-allowed"
-        value={email}
-        disabled
-      />
-
-      <input
-        type="file"
-        accept="image/*"
-        className="mb-4"
-        onChange={(e) => setImage(e.target.files?.[0] || null)}
-      />
-
-      <input
-        className="mb-4"
-        type="password"
-        placeholder="Current Password"
-        value={currentPass}
-        onChange={(e) => setCurrentPass(e.target.value)}
-      />
-      <input
-        className="mb-4"
-        type="password"
-        placeholder="New Password"
-        value={newPass}
-        onChange={(e) => setNewPass(e.target.value)}
-      />
-      <input
-        className="w-full mb-4 p-2 border rounded-lg"
-        type="password"
-        placeholder="Confirm New Password"
-        value={confirmPass}
-        onChange={(e) => setConfirmPass(e.target.value)}
-      />
-      <Button
-        onClick={handleUpdate}
-        className="w-full"
-        disabled={loading}
-      >
-        {
-          loading ?
-          <Loader2 className='animate-spin'/> :
-          "Save Changes"
-        }
-      </Button>
     </div>
   );
 }

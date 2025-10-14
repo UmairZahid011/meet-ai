@@ -16,6 +16,7 @@ import {
   DialogDescription,
   DialogClose
 } from '@/components/ui/dialog';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 type User = {
   id: number;
@@ -30,6 +31,7 @@ type User = {
 export default function UsersTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  usePageTitle("All Users — Manage Access, Roles, and Activity")
 
   // Fetch users
   const fetchUsers = async () => {

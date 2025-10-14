@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import PolicyEditor from '@/components/policy-editor';
 import { Loader2 } from 'lucide-react';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const policiesList = [
   { label: 'Privacy Policy', type: 'privacy' },
@@ -20,6 +21,7 @@ type PolicyData = {
 export default function PoliciesAdminPage() {
   const [policies, setPolicies] = useState<PolicyData[]>([]);
   const [loading, setloading] = useState(false);
+  usePageTitle("Policies — Privacy, Terms, and Legal Updates")
 
   useEffect(() => {
     setloading(true);

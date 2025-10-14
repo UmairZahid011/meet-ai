@@ -10,6 +10,7 @@ import { convertToBase64 } from '@/lib/utils';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import Image from 'next/image';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function EditBlogPage() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function EditBlogPage() {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [initialData, setInitialData] = useState({ title: '', content: '', image: '' });
+  usePageTitle("Blog Management — Publish and Update Articles")
 
   useEffect(() => {
     const fetchBlog = async () => {

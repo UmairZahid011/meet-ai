@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
 import { useDispatch } from 'react-redux';
 import { openModal } from '@/store/modalSlice';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const PUBLIC_LINK = process.env.NEXT_PUBLIC_APP_URL + 'call/';
 
@@ -36,6 +37,7 @@ export default function Meetings() {
   const [attendees, setAttendees] = useState<string[]>(['']);
   const [copiedMap, setCopiedMap] = useState<Record<string, boolean>>({});
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  usePageTitle("Your Meetings — AI Notes, Summaries, and Insights")
 
   const dispatch = useDispatch();
 

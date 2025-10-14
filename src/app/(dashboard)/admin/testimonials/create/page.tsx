@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { convertToBase64 } from '@/lib/utils';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function CreateTestimonialPage() {
   const [form, setForm] = useState({
@@ -17,6 +18,7 @@ export default function CreateTestimonialPage() {
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  usePageTitle("User Feedback — Real Stories, Real Impact")
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

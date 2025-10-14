@@ -17,6 +17,7 @@ import {
   DialogDescription,
   DialogClose
 } from '@/components/ui/dialog';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 type Blog = {
   id: number;
@@ -31,7 +32,7 @@ export default function BlogsPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-
+  usePageTitle("Blog Management — Publish and Update Articles")
 
   useEffect(() => {
     setLoading(true);
@@ -48,7 +49,7 @@ export default function BlogsPage() {
 
   const columns = [
     { name: 'Image', cell:(row:Blog)=>(
-      <Image src={row.image} width={90} height={90} alt='img'></Image>
+      <Image src={row?.image} width={90} height={90} alt='img'></Image>
     )},
     { name: 'Title', selector: (row: Blog) => row.title, sortable: true },
     { name: 'Date', selector: (row: Blog) => new Date(row.created_at).toLocaleDateString() },
