@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export default function DashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const [isGoogleAuth, setIsGoogleAuth] = useState<boolean | null>(null);
@@ -16,6 +17,7 @@ export default function DashboardLayout({ children }: Readonly<{ children: React
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith("/admin");
   const UserRoute = pathname.startsWith("/user");
+  usePageTitle("Your Daily Call Brief — Meetings, Summaries, and AI Insights")
   useEffect(() => {
     const checkAuth = async () => {
       const res = await fetch('/api/is-google-auth');

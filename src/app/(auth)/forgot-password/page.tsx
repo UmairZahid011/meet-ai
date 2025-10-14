@@ -7,10 +7,12 @@ import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  usePageTitle("Forgot Your Password? Let’s Get You Back In")
 
   const handleSubmit = async () => {
     setLoading(true);

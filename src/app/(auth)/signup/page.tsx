@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeClosed, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -17,6 +18,7 @@ export default function SignupPage() {
   const router = useRouter();
   const [showPassword, setshowPassword] = useState(true);
   const [confirmPassword, setconfirmPassword] = useState(true);
+  usePageTitle("Create Your CallRio Account — Let the AI Handle Your Calls")
   
 
   const handleRegister = async () => {

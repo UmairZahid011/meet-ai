@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
+import Head from "next/head";
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 interface Blog {
   id: number;
@@ -13,11 +15,14 @@ interface Blog {
   created_at: string;
 }
 
+
+
 const Blogs = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
-
+  usePageTitle("Insights on AI, Productivity, and Smarter Communication")
   useEffect(() => {
+    document.title = "Insights on AI, Productivity, and Smarter Communication"
     const fetchBlogs = async () => {
       try {
         const res = await fetch('/api/admin/blogs');

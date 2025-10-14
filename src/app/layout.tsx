@@ -5,8 +5,11 @@ import { Providers } from "./providers";
 
 
 export const metadata: Metadata = {
-  title: "Call Rio",
+  // title: "Call Rio",
   description: "AI-Driven Solutions for a Smarter Tomorrow",
+   icons: {
+    icon: "/imgs/favicon.ico",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

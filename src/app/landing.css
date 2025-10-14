@@ -114,15 +114,16 @@ p, li{
     left: 0;
     width: 100%;
 }
-.header-main nav li a{
+.header-main nav li a, .header-main nav li span{
     font-size: 16px;
     font-weight: 500;
     line-height: 1.3em;
     color: #fff;
     padding: 13px 15px 13px 15px;
+    cursor: pointer;
 }
-.header-main nav li a.active,
-.header-main nav li a:hover{
+.header-main nav li a.active, .header-main nav li span.active,
+.header-main nav li a:hover,.header-main nav li span:hover{
     color: #E24C4A;
 }
 /* header css */

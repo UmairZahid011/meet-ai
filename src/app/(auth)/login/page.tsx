@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { Eye, EyeClosed, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -50,6 +51,8 @@ export default function LoginPage() {
     setLoading(false);
   };
 
+  usePageTitle("Welcome Back — Let’s Get You Connected")
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-glass-color px-3">
       <div className="w-full max-w-md my-[20px] p-3 md:p-8 space-y-6 bg-[#ffffff0a] rounded-2xl shadow-lg">
@@ -91,7 +94,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {error && <p className="text-red-500 text-sm text-center -mt-3">{error}</p>}
+        {error && <p className="!text-red-600 text-sm text-center -mt-3">{error}</p>}
 
         <div className='flex justify-end text-primary pb-2'>
           <Link href={'/forgot-password'}>Forgot Password</Link>

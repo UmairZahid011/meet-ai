@@ -15,13 +15,15 @@ import { useSession } from "next-auth/react";
 import BlogSection from "./components/blog-section";
 import { faqs } from "@/constants/faq";
 import PricingSection from "./components/pricing-section";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 
 export default function Home() {
   const [islogin, setIslogin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const { data: session} = useSession();
+  const { data: session } = useSession();
+  usePageTitle("Your AI That Answers, Schedules, and Summarizes Calls — Meet")
   
   useEffect(()=>{
     if(session){
