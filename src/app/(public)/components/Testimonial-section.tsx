@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { ArrowLeft, ArrowRight, Loader2, Quote } from 'lucide-react';
 
 import 'swiper/css';
@@ -68,18 +68,23 @@ const TestimonialSection = () => {
                   :
                   <>
                     <Swiper
-                      modules={[Navigation, Pagination]}
+                      modules={[Navigation, Pagination, Autoplay]}
                       spaceBetween={24}
                       slidesPerView={1.2}
                       loop={true}
                       navigation={{
                         prevEl: '.swiper-button-prev',
                         nextEl: '.swiper-button-next',
-                      }}
+                        }}
+                        
                       breakpoints={{
                         768: { slidesPerView: 1.5 },
                         992: { slidesPerView: 2 },
-                      }}
+                        }}
+                        autoplay={{
+                          delay: 3000,
+                          disableOnInteraction: false,
+                        }}
                       className="mySwiper"
                     >
                       {testimonials.map((testimonial) => (
