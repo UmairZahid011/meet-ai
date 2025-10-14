@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { refreshAccessToken } from "@/lib/authOptions"; // Import the exported refreshAccessToken
+import { pool } from "@/lib/db";
+import { refreshAccessToken } from "@/lib/authOptions";
 
 export async function getFreshGoogleAccessToken(userId: string | number): Promise<string | null> {
     if (!userId) {
@@ -8,7 +8,7 @@ export async function getFreshGoogleAccessToken(userId: string | number): Promis
     }
 
     try {
-        const [result] = await db.query(
+        const [result] = await pool.query(
             `SELECT google_access_token, google_refresh_token, google_access_token_expires_at
              FROM users WHERE id = ?`,
             [userId]
