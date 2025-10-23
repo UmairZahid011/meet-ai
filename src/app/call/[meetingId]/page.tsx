@@ -10,7 +10,7 @@ import {
   Call,
 } from '@stream-io/video-react-sdk';
 import '@stream-io/video-react-sdk/dist/css/styles.css';
-import { Loader2, Loader2Icon } from 'lucide-react';
+import { Loader2, Loader2Icon, PackageOpen } from 'lucide-react';
 import CallStageHandler from './components/call-stage-handler';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -28,20 +28,28 @@ export default function CallPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  setLoading(true);
-  const fetchData = async () => {
-    const res = await fetch(`/api/meetings/${meetingId}`);
-    const found: Meeting = await res.json();
-      if(found){
-        setMeeting(found);
+    setLoading(true);
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`/api/meetings/${meetingId}`);
+        if (res.ok) {
+          const found: Meeting = await res.json();
+          if(found){
+            setMeeting(found);
+            setLoading(false);
+          }
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error(error)
+        setLoading(false)
       }
-    };
+    }
 
     if (meetingId) fetchData();
-    setLoading(false);
   }, [meetingId]);
 
   useEffect(() => {
@@ -115,10 +123,11 @@ export default function CallPage() {
       setLoading(false);
     }
   };
-  if (!meeting){
+  if (!meeting && !loading){
     return(
-      <div className='min-h-screen w-full flex justify-center items-center'>
-        <p className="!text-white text-center">Meeting not found.</p>;
+      <div className='min-h-screen text-white w-full flex flex-col justify-center items-center'>
+        <PackageOpen size={70} />
+        <p className="!text-white text-center !text-2xl font-semibold">Meeting not found.</p>
       </div>
     ) 
   }
@@ -199,7 +208,7 @@ export default function CallPage() {
     <StreamVideo client={client}>
       <StreamCall call={call}>
         <StreamTheme>
-          <CallStageHandler meetingName={meeting.name} userName={name} router={router}/>
+          <CallStageHandler meetingName={meeting?.name || "Untitled"} userName={name} router={router}/>
         </StreamTheme>
       </StreamCall>
     </StreamVideo>

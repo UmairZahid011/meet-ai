@@ -22,10 +22,6 @@ export default function GlobalModal() {
     router.push('/user/billing')
   }
 
-  useEffect(()=>{
-    console.log(isOpen)
-  },[isOpen])
-
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">

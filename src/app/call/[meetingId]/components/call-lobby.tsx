@@ -9,10 +9,12 @@ import {
 
 import '@stream-io/video-react-sdk/dist/css/styles.css'; // Stream's CSS
 import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 
 interface CallLobbyProps {
   meetingName: string;
-  userName: string,
+    userName: string,
+    joinLoading: boolean,
   onStartMeeting: () => void;
   onCancel: () => void;
 }
@@ -37,7 +39,7 @@ const AllowBrowserPermissions =()=>{
     )
 }
 
-export default function CallLobby({userName, meetingName, onStartMeeting }: CallLobbyProps) {
+export default function CallLobby({userName, meetingName, onStartMeeting,joinLoading }: CallLobbyProps) {
 
     const {useCameraState, useMicrophoneState} = useCallStateHooks();
 
@@ -72,8 +74,14 @@ export default function CallLobby({userName, meetingName, onStartMeeting }: Call
         </div>
 
         <div className="flex gap-4">
-            <Button onClick={onStartMeeting}>
-            Start Meeting
+            <Button disabled={joinLoading} onClick={onStartMeeting}>
+                Start Meeting
+                {
+                    joinLoading ?
+                    <Loader2  className='animate-spin text-white'/>
+                    :
+                    <></>        
+                }    
             </Button>
         </div>
         </section>

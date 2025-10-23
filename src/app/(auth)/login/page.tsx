@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -19,9 +19,12 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [showPassword, setshowPassword] = useState(true);
 
+  const params = useSearchParams();
+  let paramserror = params.get("error");
   const handleLogin = async () => {
     setLoading(true);
     setError('');
+    paramserror = null
     const res = await signIn('credentials', {
       email,
       password,
@@ -53,6 +56,7 @@ export default function LoginPage() {
   };
 
   const googleLogin = () => {
+    paramserror = null
     setgoogleLoading(true)
     signIn("google", { callbackUrl: '/user' })
   }
@@ -69,6 +73,13 @@ export default function LoginPage() {
           <h3 className="">Sign In</h3>
           {/* <p className="text-gray-600">to continue to your dashboard</p> */}
         </div>
+        {
+          paramserror &&
+          <div className='bg-red-500 text-white p-2 px-3 rounded-md'>
+              {paramserror === "Callback"}
+              <p className='!text-white'>Google Calendar access required for login</p>
+          </div>
+        }
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
           <input

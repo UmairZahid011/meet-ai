@@ -29,16 +29,13 @@ export async function POST(req: NextRequest) {
   }
   const [userPlanRows] = await pool.query('SELECT plan_id FROM user_plans WHERE user_id = ?', [session.user?.id]) as [any[], any];
   const planId = userPlanRows[0]?.plan_id;
-  console.log(planId, 'plan id');
 
   const [planRows] = await pool.query('SELECT agent_cost FROM plans WHERE id = ?', [planId]) as [any[], any];
   const agentTokenCost = planRows[0]?.agent_cost;
-  console.log(agentTokenCost, 'agent cost');
   
 
   const [userRows] = await pool.query('SELECT tokens FROM users WHERE id = ?', [session.user?.id]) as [any[], any];
   const tokens = userRows[0]?.tokens;
-  console.log(tokens, 'user tokens');
 
 
   if (tokens < agentTokenCost) {

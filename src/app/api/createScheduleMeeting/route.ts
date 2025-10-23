@@ -138,8 +138,6 @@ export async function POST(req: NextRequest) {
         JSON.stringify(participants || [])
       ]
     );
-
-    console.log('Meeting inserted into MySQL');
   } catch (err) {
     console.error("Error inserting meeting into MySQL:", err);
     return NextResponse.json({ success: false, error: "Database insert failed" }, { status: 500 });

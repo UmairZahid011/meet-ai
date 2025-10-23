@@ -154,6 +154,9 @@ select:focus{
 input{
   color-scheme: dark;
 }
+input:disabled{
+  opacity:50% !important;
+}
 input::file-selector-button {
   font-weight: bold;
   color: #fff;

@@ -1,31 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/authOptions';
-// import { db } from '@/lib/db';
 import { pool } from '@/lib/db';
-import { Meeting, Participant } from '@/lib/types'; // Ensure Participant type is imported
+import { Meeting, Participant } from '@/lib/types';
 
-// export async function GET() {
-//   // const session = await getServerSession(authOptions);
-//   // if (!session) return new NextResponse('Unauthorized', { status: 401 });
 
-//   try {
-//     const [rowsResult] = await pool.query('SELECT * FROM meetings');
-//     // Corrected type assertion: apply directly to the rows array
-//     const rows = rowsResult as Meeting[]; 
-
-//     // Parse the participants JSON string back into an array for each meeting
-//     const meetingsWithParticipants = rows.map(meeting => ({
-//       ...meeting,
-//       // participants: meeting.participant ? JSON.parse(meeting.participant as unknown as string) : [],
-//     }));
-
-//     return NextResponse.json(meetingsWithParticipants);
-//   } catch (error) {
-//     console.error('Error fetching meetings:', error);
-//     return new NextResponse('Internal Server Error', { status: 500 });
-//   }
-// }
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -118,8 +97,6 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  // const session = await getServerSession(authOptions);
-  // if (!session) return new NextResponse('Unauthorized', { status: 401 });
 
   try {
     const body = await req.json();

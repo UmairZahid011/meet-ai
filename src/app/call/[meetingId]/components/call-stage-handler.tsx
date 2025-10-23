@@ -18,14 +18,17 @@ interface CallStageHandlerProps {
 export default function CallStageHandler({ meetingName, router,userName }: CallStageHandlerProps) {
   const call = useCall();
   const [show, setShow] = useState<"lobby" | "call" | "ended">("lobby")
+  const [joinLoading, setJoinLoading] = useState(false)
   
   const handleStartMeeting = async () => {
     try {
       if (call) {
+        setJoinLoading(true)
         await call.join();
         setShow('call')
       }
     } catch (e) {
+      setJoinLoading(false)
       console.error('Failed to start meeting:', e);
     }
   };
@@ -49,6 +52,7 @@ export default function CallStageHandler({ meetingName, router,userName }: CallS
             <CallLobby 
                 meetingName={meetingName}
                 userName={userName}
+                joinLoading={joinLoading}
                 onStartMeeting={handleStartMeeting}
                 onCancel={() => router.push('/user/meetings')}
             />

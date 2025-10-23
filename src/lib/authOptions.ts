@@ -69,7 +69,6 @@ export const authOptions: NextAuthOptions = {
         params: {
           scope: "openid email profile https://www.googleapis.com/auth/calendar",
           access_type: "offline",
-          prompt: "consent",
         },
       },
     }),
@@ -143,6 +142,12 @@ export const authOptions: NextAuthOptions = {
         // }
 
         if (account?.provider === "google") {
+            const grantedScopes = account.scope?.split(" ") || [];
+            const hasCalendarAccess = grantedScopes.includes("https://www.googleapis.com/auth/calendar");
+            if (!hasCalendarAccess) {
+              console.warn("❌ User denied Google Calendar permission.");
+              return false;
+            }
             const [result] = await pool.query("SELECT * FROM users WHERE email = ?", [user.email]);
             const existingUser = (result as any[])[0];
 
@@ -200,6 +205,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages:{
-    error: '/login'
+    error: '/login',
+    signIn: '/login'
   }
 };

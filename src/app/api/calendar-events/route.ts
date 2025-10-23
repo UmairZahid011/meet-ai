@@ -18,10 +18,6 @@ export async function GET(req: NextRequest) {
   const calendarId = 'primary';
   const timeMin = new Date().toISOString();
   const url = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?timeMin=${encodeURIComponent(timeMin)}&singleEvents=true&orderBy=startTime`;
-  
-  console.log('Final API URL:', url);
-  console.log('Access Token Length:', token.accessToken.length);
-  console.log('Access Token (first 20 chars):', String(token.accessToken).substring(0, 20));
 
   try {
     const response = await fetch(url, {
