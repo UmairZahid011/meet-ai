@@ -37,7 +37,7 @@ export default function AgentsView() {
   const [selectedPurpose, setSelectedPurpose] = useState('');
   const [loading, setLoading] = useState(false);
   const [agentloading, setagentLoading] = useState(true);
-  usePageTitle("Billing — Plans, Payments, and Usage History")
+  usePageTitle("Agents - your personal ai agents")
   
   const dispatch = useDispatch();
   
@@ -183,7 +183,10 @@ export default function AgentsView() {
           </DialogContent>
         </Dialog>
       </div>
-
+      {
+        (agents.length === 0 && !agentloading)  &&
+        <p className="text-muted-foreground text-center">No Agents found.</p>
+      }
       {agentloading ? (
           <div className="flex justify-center items-center text-white p-8">
             <Loader2 className='animate-spin'/>

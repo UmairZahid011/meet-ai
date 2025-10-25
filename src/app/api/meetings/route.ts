@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
 
-    let query = 'SELECT * FROM meetings';
+    let query = 'SELECT * FROM meetings ORDER BY updated_at DESC';
     const values: string[] = [];
 
     if (userId) {

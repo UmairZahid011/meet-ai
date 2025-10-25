@@ -307,7 +307,7 @@ export default function Meetings() {
       }
       <div className="space-y-2">
         {(meetings.length === 0 || agents.length === 0) && !meetingloading ? (
-          <p className="text-muted-foreground">No meetings found.</p>
+          <p className="text-muted-foreground text-center">No meetings found.</p>
         ) : (
           meetings.map((meeting) => {
             const agentName = agents.find((a) => a.id === meeting.agent_id)?.name || 'Unknown';
