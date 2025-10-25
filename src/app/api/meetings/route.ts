@@ -10,13 +10,15 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
 
-    let query = 'SELECT * FROM meetings ORDER BY updated_at DESC';
+    let query = 'SELECT * FROM meetings';
     const values: string[] = [];
 
     if (userId) {
       query += ' WHERE userId = ?';
       values.push(userId);
     }
+
+    query += ' ORDER BY updated_at DESC;';
 
     const [rowsResult] = await pool.query(query, values);
     const rows = rowsResult as Meeting[];

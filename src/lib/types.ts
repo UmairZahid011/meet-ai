@@ -16,7 +16,9 @@ export type Meeting = {
   summary: string;
   participants: Participant[];
   start_date?: Date | null,
-  agent_joined?: boolean
+  agent_joined?: boolean,
+  updated_at?: any,
+  created_at?: any,
 };
 
 export type Agent = {

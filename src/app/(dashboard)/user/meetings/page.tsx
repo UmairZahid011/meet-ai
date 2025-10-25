@@ -1,34 +1,45 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { useDispatch } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
+import { toast } from 'sonner';
+import { Loader2, X, Plus } from 'lucide-react';
+
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
-import Link from 'next/link';
-import { Loader2, X, Plus } from 'lucide-react';
-import { Agent, Meeting } from '@/lib/types';
-import { Switch } from "@/components/ui/switch";
+import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { v4 as uuidv4 } from 'uuid';
-import { toast } from 'sonner';
-import { useSession } from 'next-auth/react';
-import { useDispatch } from 'react-redux';
+
 import { openModal } from '@/store/modalSlice';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { Agent, Meeting } from '@/lib/types';
 
-const PUBLIC_LINK = process.env.NEXT_PUBLIC_APP_URL + 'call/';
+const PUBLIC_LINK = `${process.env.NEXT_PUBLIC_APP_URL}call/`;
 
 export default function Meetings() {
+  // ─── State ───────────────────────────────────────────────────────────────
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(false);
-  const [meetingloading, setmeetingLoading] = useState(true);
+  const [meetingLoading, setMeetingLoading] = useState(true);
   const [newMeetingName, setNewMeetingName] = useState('');
   const [selectedAgentId, setSelectedAgentId] = useState('');
   const [open, setOpen] = useState(false);
@@ -37,40 +48,67 @@ export default function Meetings() {
   const [attendees, setAttendees] = useState<string[]>(['']);
   const [copiedMap, setCopiedMap] = useState<Record<string, boolean>>({});
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  usePageTitle("Your Meetings — AI Notes, Summaries, and Insights")
+
+  usePageTitle('Your Meetings — AI Notes, Summaries, and Insights');
 
   const dispatch = useDispatch();
-
   const { data: session } = useSession();
+  const userId = session?.user.id;
+
+  // ─── Derived Data ─────────────────────────────────────────────────────────
+  const isFormValid = useMemo(() => {
+    if (!newMeetingName || !selectedAgentId) return false;
+    if (showCalendarFields && (!startTime || attendees.some((a) => !a.trim()))) return false;
+    return true;
+  }, [newMeetingName, selectedAgentId, showCalendarFields, startTime, attendees]);
+
+  // ─── Helpers ─────────────────────────────────────────────────────────────
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const formattedDate = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+    const formattedTime = date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+    return `${formattedDate}, ${formattedTime}`;
+  };
+
+  const fetchData = useCallback(async () => {
+    if (!userId) return;
+
+    try {
+      const [meetingsRes, agentsRes] = await Promise.all([
+        fetch(`/api/meetings?userId=${userId}`),
+        fetch('/api/agents'),
+      ]);
+
+      if (!meetingsRes.ok || !agentsRes.ok) {
+        throw new Error('Failed to fetch meetings or agents');
+      }
+
+      const [meetingsData, agentsData] = await Promise.all([
+        meetingsRes.json(),
+        agentsRes.json(),
+      ]);
+
+      setMeetings(meetingsData);
+      setAgents(agentsData);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to load meetings or agents');
+    } finally {
+      setMeetingLoading(false);
+    }
+  }, [userId]);
 
   useEffect(() => {
-    if (!session?.user?.id) return;
-
-    const fetchData = async () => {
-      try {
-        const [meetingsRes, agentsRes] = await Promise.all([
-          fetch(`/api/meetings?userId=${session.user.id}`),
-          fetch('/api/agents'),
-        ]);
-
-        if (!meetingsRes.ok || !agentsRes.ok) throw new Error('Failed to fetch data');
-
-        const [meetings, agents] = await Promise.all([
-          meetingsRes.json(),
-          agentsRes.json(),
-        ]);
-
-        setMeetings(meetings);
-        setAgents(agents);
-        setmeetingLoading(false);
-      } catch (error) {
-        console.error(error);
-        toast.error('Failed to load meetings or agents');
-      }
-    };
-
     fetchData();
-  }, [session?.user?.id]);
+  }, [fetchData]);
 
   const handleCopy = useCallback(async (id: string) => {
     await navigator.clipboard.writeText(`${PUBLIC_LINK}${id}`);
@@ -82,8 +120,9 @@ export default function Meetings() {
     }, 2000);
   }, []);
 
+  // ─── Meeting Creation ─────────────────────────────────────────────────────
   const handleCreateMeeting = async () => {
-    if (!newMeetingName || !selectedAgentId) {
+    if (!isFormValid) {
       toast.error('Please enter all required fields');
       return;
     }
@@ -91,10 +130,11 @@ export default function Meetings() {
     setLoading(true);
 
     try {
+      // Check user tokens
       const tokenRes = await fetch('/api/get-user-token');
       if (!tokenRes.ok) throw new Error('Failed to fetch user tokens');
-
       const tokenData = await tokenRes.json();
+
       if (tokenData.tokens < tokenData.meeting_cost) {
         toast.error('Not Enough Tokens to create meeting');
         dispatch(openModal());
@@ -102,10 +142,7 @@ export default function Meetings() {
       }
 
       const agent = agents.find((a) => a.id === selectedAgentId);
-      if (!agent) {
-        toast.error('Agent not found');
-        return;
-      }
+      if (!agent) throw new Error('Agent not found');
 
       const newMeeting: Meeting = {
         id: uuidv4(),
@@ -121,6 +158,7 @@ export default function Meetings() {
         start_date: showCalendarFields ? new Date(startTime) : null,
       };
 
+      // Save meeting in both systems
       const [res, resDb] = await Promise.all([
         fetch('/api/createMeeting', {
           method: 'POST',
@@ -136,6 +174,7 @@ export default function Meetings() {
 
       const data = await res.json();
 
+      // Schedule Google Calendar event if applicable
       if (showCalendarFields && res.ok) {
         const googleEvent = {
           summary: newMeetingName,
@@ -171,13 +210,10 @@ export default function Meetings() {
       }
 
       if (data.success && resDb.ok) {
+        toast.success('Meeting created successfully!');
         setMeetings((prev) => [...prev, newMeeting]);
-        setNewMeetingName('');
-        setSelectedAgentId('');
-        setShowCalendarFields(false);
-        setStartTime('');
-        setAttendees(['']);
-        setOpen(false);
+        resetForm();
+        fetchData();
       } else {
         toast.error('Failed to create meeting.');
       }
@@ -189,19 +225,34 @@ export default function Meetings() {
     }
   };
 
+  const resetForm = () => {
+    setNewMeetingName('');
+    setSelectedAgentId('');
+    setShowCalendarFields(false);
+    setStartTime('');
+    setAttendees(['']);
+    setOpen(false);
+  };
+
+  // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <div className="p-4">
+      {/* Header + Dialog */}
       <div className="flex gap-4 sm:items-center justify-between mb-4 sm:flex-row flex-col">
         <h2 className="text-xl font-bold">Meetings</h2>
+
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>Create New Meeting</Button>
           </DialogTrigger>
+
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Create Meeting</DialogTitle>
             </DialogHeader>
+
             <div className="space-y-4">
+              {/* Meeting Name */}
               <div>
                 <Label className="mb-2 block">Meeting Name</Label>
                 <Input
@@ -210,11 +261,13 @@ export default function Meetings() {
                   placeholder="Enter meeting name"
                 />
               </div>
+
+              {/* Agent Select */}
               <div>
                 <Label className="mb-2 block">Select Agent</Label>
                 <Select value={selectedAgentId} onValueChange={setSelectedAgentId}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Choose agent" className='text-white' />
+                    <SelectValue placeholder="Choose agent" />
                   </SelectTrigger>
                   <SelectContent>
                     {agents.map((agent) => (
@@ -225,11 +278,14 @@ export default function Meetings() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Schedule Switch */}
               <div className="flex items-center gap-2">
                 <Label className="text-sm">Schedule for Later</Label>
                 <Switch checked={showCalendarFields} onCheckedChange={setShowCalendarFields} />
               </div>
 
+              {/* Calendar Fields */}
               {showCalendarFields && (
                 <>
                   <div>
@@ -240,6 +296,7 @@ export default function Meetings() {
                       onChange={(e) => setStartTime(e.target.value)}
                     />
                   </div>
+
                   <div>
                     <Label className="mb-2 block">Attendees Email</Label>
                     <div className="space-y-2">
@@ -257,17 +314,18 @@ export default function Meetings() {
                           {attendees.length > 1 && (
                             <Button
                               variant="ghost"
-                              className='bg-white text-black'
+                              className="bg-white text-black"
                               size="icon"
-                              onClick={() => {
-                                setAttendees(attendees.filter((_, i) => i !== index));
-                              }}
+                              onClick={() =>
+                                setAttendees(attendees.filter((_, i) => i !== index))
+                              }
                             >
                               <X size={16} />
                             </Button>
                           )}
                         </div>
                       ))}
+
                       <Button
                         type="button"
                         variant="outline"
@@ -282,16 +340,11 @@ export default function Meetings() {
                 </>
               )}
 
+              {/* Submit Button */}
               <Button
                 onClick={handleCreateMeeting}
                 className="w-full"
-                disabled={
-                  !newMeetingName ||
-                  !selectedAgentId ||
-                  loading ||
-                  (showCalendarFields &&
-                    (!startTime || attendees.some((email) => email.trim() === '')))
-                }
+                disabled={!isFormValid || loading}
               >
                 {loading ? <Loader2 className="animate-spin" /> : 'Create'}
               </Button>
@@ -299,14 +352,17 @@ export default function Meetings() {
           </DialogContent>
         </Dialog>
       </div>
-      {
-        meetingloading &&
+
+      {/* Loader */}
+      {meetingLoading && (
         <div className="flex justify-center items-center py-8">
-            <Loader2 className='animate-spin text-white w-8 h-8'/>
+          <Loader2 className="animate-spin text-white w-8 h-8" />
         </div>
-      }
+      )}
+
+      {/* Meeting List */}
       <div className="space-y-2">
-        {(meetings.length === 0 || agents.length === 0) && !meetingloading ? (
+        {!meetingLoading && meetings.length === 0 ? (
           <p className="text-muted-foreground text-center">No meetings found.</p>
         ) : (
           meetings.map((meeting) => {
@@ -319,27 +375,34 @@ export default function Meetings() {
                 className="p-4 border flex justify-between sm:items-center border-foreground bg-foreground rounded-lg shadow-sm sm:flex-row flex-col gap-4"
               >
                 <div>
-                  <div className="font-semibold text-xl capitalize text-white">{meeting.name}</div>
-                  <div className="text-sm text-muted-foreground my-3">
-                    Agent Name :{' '}
+                  <h4 className="font-semibold text-xl capitalize text-white">{meeting.name}</h4>
+                  <p className="text-sm text-muted-foreground my-3">
+                    Agent:{' '}
                     <span className="capitalize text-primary font-semibold">{agentName}</span>
-                  </div>
-                  <div>
-                    <Badge variant={meeting.status.toLowerCase() as any}>
-                      {meeting.status}
-                    </Badge>
-                  </div>
+                  </p>
+                  <Badge variant={meeting.status.toLowerCase() as any}>
+                    {meeting.status}
+                  </Badge>
+                  <p className="text-white text-sm mt-2">
+                    {formatDateTime(meeting.updated_at || meeting.created_at)}
+                  </p>
                 </div>
+
                 <div className="flex gap-2 items-center">
-                  {(meeting.status === 'Upcoming' ||
-                    meeting.status === 'Active' ||
-                    meeting.status === 'Schedule') && (
-                    <Button className='!py-2 !px-4' variant="outline" onClick={() => handleCopy(meeting.id)} disabled={isCopied}>
+                  {['Upcoming', 'Active', 'Schedule'].includes(meeting.status) && (
+                    <Button
+                      className="!py-2 !px-4"
+                      variant="outline"
+                      onClick={() => handleCopy(meeting.id)}
+                      disabled={isCopied}
+                    >
                       {isCopied ? 'Copied!' : 'Copy Link'}
                     </Button>
                   )}
                   <Link href={`/user/meetings/${meeting.id}`}>
-                    <Button variant="outline" className='!py-2 !px-4'>View</Button>
+                    <Button variant="outline" className="!py-2 !px-4">
+                      View
+                    </Button>
                   </Link>
                 </div>
               </div>
