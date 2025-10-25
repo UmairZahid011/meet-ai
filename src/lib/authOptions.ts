@@ -125,28 +125,11 @@ export const authOptions: NextAuthOptions = {
 
     async jwt({ token, user, account }) {
       if (account && user) {
-        // if (account.provider === "google") {
-        //   await pool.query(
-        //     `UPDATE users SET
-        //       google_access_token = ?,
-        //       google_refresh_token = ?,
-        //       google_access_token_expires_at = ?
-        //     WHERE id = ?`,
-        //     [
-        //       account.access_token,
-        //       account.refresh_token,
-        //       account.expires_at ? new Date(account.expires_at * 1000) : null,
-        //       user.id
-        //     ]
-        //   );
-        // }
-
         if (account?.provider === "google") {
             const grantedScopes = account.scope?.split(" ") || [];
             const hasCalendarAccess = grantedScopes.includes("https://www.googleapis.com/auth/calendar");
             if (!hasCalendarAccess) {
-              console.warn("❌ User denied Google Calendar permission.");
-              return false;
+              throw new Error("Google Calendar access not granted");
             }
             const [result] = await pool.query("SELECT * FROM users WHERE email = ?", [user.email]);
             const existingUser = (result as any[])[0];
