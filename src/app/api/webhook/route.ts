@@ -365,78 +365,102 @@ export async function POST(req: NextRequest) {
     }
 
     console.log(existingAgent.id, "existing agent id from webhook");
+    console.log(process.env.OPENAI_API_KEY, 'open ai key');
 
     // ✅ Connect the OpenAI Agent
     const call = streamVideo.video.call("default", meetingId);
-    const realtimeClient = await streamVideo.video.connectOpenAi({
-      call,
-      openAiApiKey: process.env.OPENAI_API_KEY!,
-      agentUserId: String(existingAgent.id),
-    });
-
-    // ✅ Mark agent as joined (important!)
-    await pool.query("UPDATE meetings SET agent_joined = TRUE WHERE id = ?", [meetingId]);
-    console.log(`Agent marked as joined for meeting ${meetingId}`);
-
-    // Update session instructions
-    realtimeClient.updateSession({
-      instructions: `
-        ${existingAgent.instruction}
-
-        If the user requests to schedule a meeting or expresses interest in a future meeting:
-        1. Politely acknowledge the request.
-        2. Ask for the meeting topic (e.g., “What would you like the meeting to be about?”).
-        3. Ask for the preferred date and start time of the meeting.
-        4. Once all details are gathered, summarize the topic and time back to the user.
-        5. Ask for confirmation: “Would you like me to go ahead and schedule this meeting?”
-        6. If the user confirms, **call the tool named 'schedule_meeting' with the topic and start time.**
-        7. Then reply: “Great! I’ll schedule this meeting after the current call ends.”
-
-        Always remain professional, helpful, and concise in tone.
-      `,
-    });
-
-    realtimeClient.addTool(
-      {
-        name: "schedule_meeting",
-        description: "Schedule future meeting",
-        parameters: {
-          type: "object",
-          properties: {
-            topic: { type: "string", description: "topic of the meeting" },
-            startTime: { type: "string", description: "starting date and time for meeting" },
+    if (call) {
+      const realtimeClient = await streamVideo.video.connectOpenAi({
+        call,
+        openAiApiKey: process.env.OPENAI_API_KEY!,
+        agentUserId: String(existingAgent.id),
+      });
+      // ✅ Mark agent as joined (important!)
+      await pool.query("UPDATE meetings SET agent_joined = TRUE WHERE id = ?", [meetingId]);
+      console.log(`Agent marked as joined for meeting ${meetingId}`);
+  
+      // await realtimeClient.sendUserMessageContent({
+      //   type: "input_text", text: "say that am working on it '" 
+      // });
+  
+      realtimeClient.updateSession({
+        instructions: `
+          ${existingAgent.instruction}
+  
+          If the user requests to schedule a meeting or expresses interest in a future meeting:
+          1. Politely acknowledge the request.
+          2. Ask for the meeting topic (e.g., “What would you like the meeting to be about?”).
+          3. Ask for the preferred date and start time of the meeting.
+          4. Once all details are gathered, summarize the topic and time back to the user.
+          5. Ask for confirmation: “Would you like me to go ahead and schedule this meeting?”
+          6. If the user confirms, **call the tool named 'schedule_meeting' with the topic and start time.**
+          7. Then reply: “Great! I’ll schedule this meeting after the current call ends.”
+  
+          Always remain professional, helpful, and concise in tone.
+        `,
+      });
+  
+  
+      realtimeClient.on("message", (msg:any) => {
+        console.log("🧠 AI Message:", msg);
+      });
+      realtimeClient.on("event", (ev:any) => {
+        console.log("📡 Event:", ev.type);
+      });
+  
+      realtimeClient.addTool(
+        {
+          name: "schedule_meeting",
+          description: "Schedule future meeting",
+          parameters: {
+            type: "object",
+            properties: {
+              topic: { type: "string", description: "topic of the meeting" },
+              startTime: { type: "string", description: "starting date and time for meeting" },
+            },
+            required: ["topic", "startTime"],
           },
-          required: ["topic", "startTime"],
         },
-      },
-      async ({ topic, startTime }: any) => {
-        console.log("schedule_meeting");
-        const newMeeting = {
-          id: uuidv4(),
-          name: topic,
-          agent_id: existingAgent.id,
-          status: "Schedule",
-          started_at: "",
-          ended_at: "",
-          transcript_url: "",
-          recording_url: "",
-          summary: "",
-          participant: [],
-          start_date: new Date(startTime),
-        };
-
-        const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/createScheduleMeeting`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ topic, startTime, existingAgent, existingMeeting, newMeeting }),
-        });
-        if (!res.ok) {
-          const error = await res.text();
-          console.log("Stream call creation failed:", error);
+        async ({ topic, startTime }: any) => {
+          console.log("schedule_meeting");
+          const newMeeting = {
+            id: uuidv4(),
+            name: topic,
+            agent_id: existingAgent.id,
+            status: "Schedule",
+            started_at: "",
+            ended_at: "",
+            transcript_url: "",
+            recording_url: "",
+            summary: "",
+            participant: [],
+            start_date: new Date(startTime),
+          };
+  
+          const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/createScheduleMeeting`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ topic, startTime, existingAgent, existingMeeting, newMeeting }),
+          });
+          if (!res.ok) {
+            const error = await res.text();
+            console.log("Stream call creation failed:", error);
+          }
+          return { success: true };
         }
-        return { success: true };
-      }
-    );
+      );
+  
+      realtimeClient.on("error", (err:any) => {
+        console.error("❌ OpenAI Realtime Client error:", err);
+      });
+  
+      realtimeClient.on("close", () => {
+        console.warn("⚠️ Realtime Client connection closed");
+      });
+
+      console.log(call, 'agent id',  existingAgent.id, 'call from stream and connection is made' )
+    }
+
 
     return NextResponse.json({ success: true });
   }
@@ -530,6 +554,7 @@ export async function POST(req: NextRequest) {
       console.error("Error saving recording to Supabase:", error);
       return NextResponse.json({ error: "Failed to handle recording" }, { status: 500 });
     }
+    return NextResponse.json({ success: true });
   }
 
   return NextResponse.json({ error: "Unhandled event" }, { status: 400 });
