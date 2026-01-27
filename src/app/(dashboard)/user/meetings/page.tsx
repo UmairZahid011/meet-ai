@@ -135,7 +135,7 @@ export default function Meetings() {
       if (!tokenRes.ok) throw new Error('Failed to fetch user tokens');
       const tokenData = await tokenRes.json();
 
-      if (tokenData.tokens < tokenData.meeting_cost) {
+      if (tokenData.tokens < tokenData.meeting_cost || (tokenData.status && tokenData.status == 404)) {
         toast.error('Not Enough Tokens to create meeting');
         dispatch(openModal());
         return;

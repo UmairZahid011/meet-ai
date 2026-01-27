@@ -36,26 +36,26 @@ export async function POST(req: NextRequest) {
     [name, email, hashedPassword]
   );
 
-  const userId = result[0].insertId;
+  // const userId = result[0].insertId;
 
-  const [rows] = await pool.query(
-      'SELECT id, name, tokens FROM plans WHERE name = ?',
-      ['free']
-    ) as any[];
+  // const [rows] = await pool.query(
+  //     'SELECT id, name, tokens FROM plans WHERE name = ?',
+  //     ['free']
+  //   ) as any[];
 
-    const plan = rows[0];
-    const plan_id = rows[0]?.id
+  //   const plan = rows[0];
+  //   const plan_id = rows[0]?.id
 
 
-    await pool.query(
-      'INSERT INTO user_plans (user_id, plan_id) VALUES (?, ?)',
-      [userId, plan_id]
-    );
+    // await pool.query(
+    //   'INSERT INTO user_plans (user_id, plan_id) VALUES (?, ?)',
+    //   [userId, plan_id]
+    // );
 
-    await pool.query(
-      'UPDATE users SET plan = ?, tokens = tokens + ? WHERE id = ?',
-      [plan.name, plan.tokens, userId]
-    );
+    // await pool.query(
+    //   'UPDATE users SET plan = ?, tokens = tokens + ? WHERE id = ?',
+    //   [plan.name, plan.tokens, userId]
+    // );
 
   return NextResponse.json({ message: 'User registered successfully' }, { status: 201 });
 }

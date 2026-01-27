@@ -6,6 +6,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const call = await createStreamCall(meeting, agent, req);
+    console.log("Stream call created with ID:", call);
     return NextResponse.json({ success: true, callId: call.id});
   } catch (error) {
     return NextResponse.json({ success: false, error: (error as Error).message }, { status: 500 });

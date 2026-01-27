@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('Google Calendar API Error:', response.status, errorData);
+      console.error('Google Calendar API Error:', response.status, JSON.stringify(errorData));
       return new NextResponse(
         JSON.stringify({ error: 'Failed to fetch calendar events from Google.', details: errorData }),
         { status: response.status, headers: { 'Content-Type': 'application/json' } }
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const calendarId = 'bs131400@gmail.com';
+  const calendarId = 'primary';
   const url = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`;
 
   try {

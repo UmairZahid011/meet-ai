@@ -17,7 +17,7 @@ export async function GET() {
 
     const planId = userPlanRows[0]?.plan_id;
     if (!planId) {
-      return new NextResponse('User does not have a plan', { status: 404 });
+      return NextResponse.json({message:'Please purchase a plan to continue', status: 404 });
     }
 
     // Step 2: Get meeting_cost and agent_cost from plans table

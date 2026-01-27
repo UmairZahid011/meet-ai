@@ -69,6 +69,15 @@ export async function POST(req: NextRequest) {
       'UPDATE users SET tokens = tokens - ? WHERE id = ?',
       [meetingTokenCost, session.user.id]
     );
+    let mysqlDate: string | null = null;
+    if(start_date) {
+      const startDate = new Date(start_date);
+
+      mysqlDate = startDate
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ");
+    }
 
     await pool.query(
       `INSERT INTO meetings (id, name, status, userId, agent_id, start_date,is_payed, participants)
@@ -79,7 +88,7 @@ export async function POST(req: NextRequest) {
         status || 'Upcoming',
         session.user.id,
         agent_id,
-        start_date || null,
+        mysqlDate || null,
         1,
         JSON.stringify(participant || [])
       ]
