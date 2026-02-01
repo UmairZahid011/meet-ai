@@ -17,6 +17,25 @@ const streamVideo = new StreamClient(
   process.env.STREAM_VIDEO_SECRET_KEY!
 );
 
+
+const uploadVideoFromUrl = async (videoUrl: string) => {
+  try {
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/supabase/upload`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: videoUrl }),
+    });
+
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Failed to upload video");
+
+    return result.url;
+  } catch (error) {
+    console.error("Upload failed:", error);
+    return null;
+  }
+};
+
 function verifySignatureWithSDK(body: string, signature: string): boolean {
   return streamVideo.verifyWebhook(body, signature);
 }
@@ -242,10 +261,10 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-
+      const result = await uploadVideoFromUrl(event.call_recording.url);
       await pool.query("UPDATE meetings SET status = ?, recording_url = ? WHERE id = ?", [
         "Completed",
-        event.call_recording.url,
+        result,
         meetingId,
       ]);
 
